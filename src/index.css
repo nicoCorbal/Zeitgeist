@@ -33,13 +33,13 @@
 }
 
 :root {
-  --bg: #ffffff;
-  --bg-secondary: #fafafa;
-  --text: #0a0a0a;
+  --bg: #f5f5f5;
+  --bg-secondary: #ebebeb;
+  --text: #141414;
   --text-secondary: #666666;
-  --text-tertiary: #999999;
-  --border: #e5e5e5;
-  --border-light: #f0f0f0;
+  --text-tertiary: #737373;
+  --border: #e0e0e0;
+  --border-light: #ebebeb;
 }
 
 [data-theme="dark"] {
