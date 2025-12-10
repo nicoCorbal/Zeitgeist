@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Target, Volume2, VolumeX, Clock, Palette } from 'lucide-react'
+import { X, Target, Volume2, VolumeX, Clock, Palette, Sparkles } from 'lucide-react'
 import { ColorPicker } from './ColorPicker'
 import { EmojiPicker } from './EmojiPicker'
 import { IconPicker } from './IconPicker'
+import { ThemePicker } from './ThemePicker'
+import { SoundPicker } from './SoundPicker'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -32,12 +34,18 @@ export function SettingsPanel({
   onWeeklyGoalChange,
   soundEnabled,
   onSoundToggle,
+  soundType,
+  onSoundTypeChange,
   currentSubject,
   onSubjectUpdate,
+  theme,
+  onThemeChange,
 }) {
   const [goalHours, setGoalHours] = useState(Math.round(weeklyGoal / 3600))
   const [workMinutes, setWorkMinutes] = useState(Math.round((currentSubject?.workDuration || 25 * 60) / 60))
   const [breakMinutes, setBreakMinutes] = useState(Math.round((currentSubject?.breakDuration || 5 * 60) / 60))
+  const [longBreakMinutes, setLongBreakMinutes] = useState(Math.round((currentSubject?.longBreakDuration || 15 * 60) / 60))
+  const [longBreakInterval, setLongBreakIntervalState] = useState(currentSubject?.longBreakInterval ?? 4)
 
   useEffect(() => {
     setGoalHours(Math.round(weeklyGoal / 3600))
@@ -46,6 +54,8 @@ export function SettingsPanel({
   useEffect(() => {
     setWorkMinutes(Math.round((currentSubject?.workDuration || 25 * 60) / 60))
     setBreakMinutes(Math.round((currentSubject?.breakDuration || 5 * 60) / 60))
+    setLongBreakMinutes(Math.round((currentSubject?.longBreakDuration || 15 * 60) / 60))
+    setLongBreakIntervalState(currentSubject?.longBreakInterval ?? 4)
   }, [currentSubject])
 
   const handleGoalChange = (hours) => {
@@ -70,6 +80,24 @@ export function SettingsPanel({
 
   const handleBreakCommit = () => {
     onSubjectUpdate({ breakDuration: breakMinutes * 60 })
+  }
+
+  const handleLongBreakChange = (minutes) => {
+    const m = Math.max(5, Math.min(60, minutes))
+    setLongBreakMinutes(m)
+  }
+
+  const handleLongBreakCommit = () => {
+    onSubjectUpdate({ longBreakDuration: longBreakMinutes * 60 })
+  }
+
+  const handleLongBreakIntervalChange = (interval) => {
+    const i = Math.max(0, Math.min(10, interval))
+    setLongBreakIntervalState(i)
+  }
+
+  const handleLongBreakIntervalCommit = () => {
+    onSubjectUpdate({ longBreakInterval })
   }
 
   return (
@@ -118,6 +146,19 @@ export function SettingsPanel({
                 animate="visible"
                 className="space-y-8"
               >
+                {/* Tema */}
+                <motion.div variants={itemVariants}>
+                  <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+                    <Sparkles size={12} />
+                    <span className="text-[10px] font-semibold uppercase tracking-widest">
+                      Tema
+                    </span>
+                  </div>
+                  <div className="mt-4">
+                    <ThemePicker value={theme} onChange={onThemeChange} />
+                  </div>
+                </motion.div>
+
                 {/* Meta semanal */}
                 <motion.div variants={itemVariants}>
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
@@ -169,9 +210,16 @@ export function SettingsPanel({
                       />
                     </motion.button>
                   </div>
-                  <p className="mt-2 text-[12px] text-[var(--text-tertiary)]">
-                    Notificación sonora al terminar
-                  </p>
+                  {soundEnabled && (
+                    <div className="mt-4">
+                      <SoundPicker value={soundType} onChange={onSoundTypeChange} />
+                    </div>
+                  )}
+                  {!soundEnabled && (
+                    <p className="mt-2 text-[12px] text-[var(--text-tertiary)]">
+                      Notificación sonora al terminar
+                    </p>
+                  )}
                 </motion.div>
 
                 {/* Personalización de asignatura */}
@@ -251,6 +299,40 @@ export function SettingsPanel({
                         onChange={(e) => handleBreakChange(parseInt(e.target.value))}
                         onMouseUp={handleBreakCommit}
                         onTouchEnd={handleBreakCommit}
+                        className="h-1 w-full"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[13px] text-[var(--text-secondary)]">Descanso largo</span>
+                        <span className="text-[13px] font-medium tabular-nums text-[var(--text)]">{longBreakMinutes} min</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="5"
+                        max="60"
+                        value={longBreakMinutes}
+                        onChange={(e) => handleLongBreakChange(parseInt(e.target.value))}
+                        onMouseUp={handleLongBreakCommit}
+                        onTouchEnd={handleLongBreakCommit}
+                        className="h-1 w-full"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[13px] text-[var(--text-secondary)]">Cada</span>
+                        <span className="text-[13px] font-medium tabular-nums text-[var(--text)]">
+                          {longBreakInterval === 0 ? 'Nunca' : `${longBreakInterval} pomodoros`}
+                        </span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="10"
+                        value={longBreakInterval}
+                        onChange={(e) => handleLongBreakIntervalChange(parseInt(e.target.value))}
+                        onMouseUp={handleLongBreakIntervalCommit}
+                        onTouchEnd={handleLongBreakIntervalCommit}
                         className="h-1 w-full"
                       />
                     </div>

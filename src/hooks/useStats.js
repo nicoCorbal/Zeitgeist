@@ -27,7 +27,10 @@ const migrateSubject = (subject) => ({
   emoji: subject.emoji || null,
   workDuration: subject.workDuration || 25 * 60,
   breakDuration: subject.breakDuration || 5 * 60,
+  longBreakDuration: subject.longBreakDuration || 15 * 60,
+  longBreakInterval: subject.longBreakInterval ?? 4,
   todos: subject.todos || [],
+  tags: subject.tags || [],
 })
 
 export function useStats() {
@@ -35,6 +38,7 @@ export function useStats() {
   const [rawSubjects, setSubjects] = useLocalStorage('zeitgeist-subjects', [
     { id: '1', name: 'General', color: '#141414', icon: null, emoji: '💻', workDuration: 25 * 60, breakDuration: 5 * 60, todos: [] },
   ])
+  const [tags, setTags] = useLocalStorage('zeitgeist-tags', [])
 
   // Migrar subjects existentes para añadir campos faltantes
   const subjects = rawSubjects.map(migrateSubject)
@@ -61,6 +65,8 @@ export function useStats() {
       emoji: null,
       workDuration: 25 * 60,
       breakDuration: 5 * 60,
+      longBreakDuration: 15 * 60,
+      longBreakInterval: 4,
       todos: [],
     }
     setSubjects((prev) => [...prev, newSubject])
@@ -118,6 +124,54 @@ export function useStats() {
       prev.map((s) =>
         s.id === subjectId
           ? { ...s, todos: (s.todos || []).filter((t) => t.id !== todoId) }
+          : s
+      )
+    )
+  }
+
+  // Tags CRUD
+  const addTag = (name, color = '#666666') => {
+    const newTag = {
+      id: Date.now().toString(),
+      name,
+      color,
+    }
+    setTags((prev) => [...prev, newTag])
+    return newTag.id
+  }
+
+  const updateTag = (id, updates) => {
+    setTags((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...updates } : t))
+    )
+  }
+
+  const deleteTag = (id) => {
+    setTags((prev) => prev.filter((t) => t.id !== id))
+    // También quitar el tag de todas las asignaturas
+    setSubjects((prev) =>
+      prev.map((s) => ({
+        ...s,
+        tags: (s.tags || []).filter((tagId) => tagId !== id),
+      }))
+    )
+  }
+
+  const addTagToSubject = (subjectId, tagId) => {
+    setSubjects((prev) =>
+      prev.map((s) =>
+        s.id === subjectId && !(s.tags || []).includes(tagId)
+          ? { ...s, tags: [...(s.tags || []), tagId] }
+          : s
+      )
+    )
+  }
+
+  const removeTagFromSubject = (subjectId, tagId) => {
+    setSubjects((prev) =>
+      prev.map((s) =>
+        s.id === subjectId
+          ? { ...s, tags: (s.tags || []).filter((id) => id !== tagId) }
           : s
       )
     )
@@ -188,6 +242,7 @@ export function useStats() {
     currentSubject,
     weeklyGoal,
     stats,
+    tags,
     addSession,
     addSubject,
     updateSubject,
@@ -197,5 +252,10 @@ export function useStats() {
     addTodo,
     toggleTodo,
     deleteTodo,
+    addTag,
+    updateTag,
+    deleteTag,
+    addTagToSubject,
+    removeTagFromSubject,
   }
 }

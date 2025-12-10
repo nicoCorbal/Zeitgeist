@@ -69,8 +69,9 @@ function App() {
   const [viewingTodosFor, setViewingTodosFor] = useState(null) // ID de asignatura para ver todos
   const [newTodoText, setNewTodoText] = useState('')
   const [soundEnabled, setSoundEnabled] = useLocalStorage('zeitgeist-sound', true)
+  const [soundType, setSoundType] = useLocalStorage('zeitgeist-sound-type', 'bell')
 
-  const { theme, toggle: toggleTheme } = useTheme()
+  const { theme, setTheme, toggle: toggleTheme, isDark } = useTheme()
   const { notify, requestPermission } = useNotification()
   const { toast, show: showToast } = useToast()
   const {
@@ -91,13 +92,15 @@ function App() {
   const current = subjects.find((s) => s.id === currentSubject)
   const workDuration = current?.workDuration || 25 * 60
   const breakDuration = current?.breakDuration || 5 * 60
+  const longBreakDuration = current?.longBreakDuration || 15 * 60
+  const longBreakInterval = current?.longBreakInterval ?? 4
 
   const handlePhaseComplete = useCallback((phase) => {
-    if (soundEnabled) notify(phase)
+    if (soundEnabled) notify(phase, soundType)
     showToast(phase === 'work' ? 'Pomodoro completado' : 'Descanso terminado')
-  }, [notify, soundEnabled, showToast])
+  }, [notify, soundEnabled, soundType, showToast])
 
-  const timer = useTimer(addSession, handlePhaseComplete, workDuration, breakDuration)
+  const timer = useTimer(addSession, handlePhaseComplete, workDuration, breakDuration, longBreakDuration, longBreakInterval)
 
   const currentSessionTime = timer.isRunning
     ? timer.mode === 'pomodoro'
@@ -179,7 +182,7 @@ function App() {
             onClick={toggleTheme}
             className="p-2 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
           >
-            {theme === 'light' ? <Moon size={16} strokeWidth={1.5} /> : <Sun size={16} strokeWidth={1.5} />}
+            {isDark ? <Sun size={16} strokeWidth={1.5} /> : <Moon size={16} strokeWidth={1.5} />}
           </button>
         </div>
       </header>
@@ -500,8 +503,12 @@ function App() {
         onWeeklyGoalChange={setWeeklyGoal}
         soundEnabled={soundEnabled}
         onSoundToggle={() => setSoundEnabled(!soundEnabled)}
+        soundType={soundType}
+        onSoundTypeChange={setSoundType}
         currentSubject={current}
         onSubjectUpdate={(updates) => updateSubject(currentSubject, updates)}
+        theme={theme}
+        onThemeChange={setTheme}
       />
 
       {/* Focus mode panels - simétrico: asignaturas izquierda, todos derecha */}

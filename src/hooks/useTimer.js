@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 
-export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 * 60, breakDuration = 5 * 60) {
+export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 * 60, breakDuration = 5 * 60, longBreakDuration = 15 * 60, longBreakInterval = 4) {
   const [mode, setMode] = useState('pomodoro') // 'pomodoro' | 'free'
   const [phase, setPhase] = useState('work') // 'work' | 'break'
   const [isRunning, setIsRunning] = useState(false)
@@ -145,11 +145,15 @@ export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 *
         if (remaining <= 0) {
           // Session complete
           if (phase === 'work') {
-            setPomodoroCount((c) => c + 1)
+            const newCount = pomodoroCount + 1
+            setPomodoroCount(newCount)
             completeSession(workDuration)
             setPhase('break')
-            setPausedTimeLeft(breakDuration)
-            setTargetEndTime(now + breakDuration * 1000)
+            // Usar descanso largo si es múltiplo de longBreakInterval
+            const isLongBreak = longBreakInterval > 0 && newCount % longBreakInterval === 0
+            const nextBreak = isLongBreak ? longBreakDuration : breakDuration
+            setPausedTimeLeft(nextBreak)
+            setTargetEndTime(now + nextBreak * 1000)
             onPhaseCompleteRef.current?.('work')
           } else {
             setPhase('work')
@@ -170,7 +174,7 @@ export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 *
     intervalRef.current = setInterval(tick, 100)
 
     return clearTimer
-  }, [isRunning, mode, phase, targetEndTime, startTime, clearTimer, completeSession, workDuration, breakDuration])
+  }, [isRunning, mode, phase, targetEndTime, startTime, clearTimer, completeSession, workDuration, breakDuration, longBreakDuration, longBreakInterval, pomodoroCount])
 
   const elapsedTime = mode === 'free' ? displayTime : 0
   const progress = mode === 'pomodoro'
