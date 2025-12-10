@@ -164,7 +164,7 @@ function App() {
     <div className="flex min-h-screen flex-col bg-[var(--bg)] text-[var(--text)] transition-colors duration-500">
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-5">
+      <header className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5">
         <button
           onClick={() => setShowStats(true)}
           className="text-[13px] font-semibold tracking-tight text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
@@ -482,7 +482,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="flex items-center justify-center gap-5 px-6 py-5 text-[12px] tabular-nums text-[var(--text-tertiary)]">
+      <footer className="flex items-center justify-center gap-3 px-4 py-4 text-[11px] tabular-nums text-[var(--text-tertiary)] sm:gap-5 sm:px-6 sm:py-5 sm:text-[12px]">
         <span>{stats.streak} días</span>
         <div className="h-1 w-16 rounded-full bg-[var(--border)]">
           <motion.div
@@ -515,13 +515,13 @@ function App() {
       <AnimatePresence>
         {isFocusMode && (
           <>
-            {/* Selector de asignaturas - izquierda */}
+            {/* Selector de asignaturas - izquierda (oculto en móvil) */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -30 }}
               transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-              className="fixed left-8 top-1/2 -translate-y-1/2"
+              className="fixed left-4 top-1/2 -translate-y-1/2 hidden lg:block"
             >
               <motion.p
                 initial={{ opacity: 0 }}
@@ -565,13 +565,13 @@ function App() {
               </div>
             </motion.div>
 
-            {/* Todos - derecha */}
+            {/* Todos - derecha (oculto en móvil) */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 30 }}
               transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-              className="fixed right-8 top-1/2 -translate-y-1/2"
+              className="fixed right-4 top-1/2 -translate-y-1/2 hidden lg:block"
             >
               <motion.p
                 initial={{ opacity: 0 }}
