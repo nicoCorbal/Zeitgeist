@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/Geist-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/Geist-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/Geist-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/Geist-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #ffffff;
+  --bg-secondary: #fafafa;
+  --text: #0a0a0a;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border: #e5e5e5;
+  --border-light: #f0f0f0;
+}
+
+[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --bg-secondary: #141414;
+  --text: #fafafa;
+  --text-secondary: #a0a0a0;
+  --text-tertiary: #666666;
+  --border: #262626;
+  --border-light: #1a1a1a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+::selection {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+/* Focus states */
+:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+/* Remove focus outline for text inputs */
+input[type="text"]:focus,
+input[type="text"]:focus-visible {
+  outline: none;
+}
+
+/* Remove default focus for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--text);
+  border-radius: 50%;
+  margin-top: -5px;
+  transition: transform 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+}
+
+/* Disable text selection on interactive elements */
+button, [role="button"] {
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide scrollbar for horizontal sliders */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
