@@ -1,7 +1,12 @@
 import { useMemo } from 'react'
 import { useLocalStorage } from './useLocalStorage'
 
-const getDateKey = (date = new Date()) => date.toISOString().split('T')[0]
+const getDateKey = (date = new Date()) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
 const MIN_DAILY_TIME = 25 * 60 // 25 minutos mínimo para contar el día
 

@@ -3,10 +3,16 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 * 60, breakDuration = 5 * 60) {
   const [mode, setMode] = useState('pomodoro') // 'pomodoro' | 'free'
   const [phase, setPhase] = useState('work') // 'work' | 'break'
-  const [timeLeft, setTimeLeft] = useState(workDuration)
-  const [elapsedTime, setElapsedTime] = useState(0)
   const [isRunning, setIsRunning] = useState(false)
   const [pomodoroCount, setPomodoroCount] = useState(0)
+
+  // Tiempo basado en timestamps reales (no en intervalos)
+  const [targetEndTime, setTargetEndTime] = useState(null) // Para pomodoro
+  const [startTime, setStartTime] = useState(null) // Para modo libre
+  const [pausedTimeLeft, setPausedTimeLeft] = useState(workDuration) // Tiempo restante al pausar
+  const [pausedElapsed, setPausedElapsed] = useState(0) // Tiempo transcurrido al pausar
+
+  const [displayTime, setDisplayTime] = useState(workDuration)
 
   const intervalRef = useRef(null)
   const onPhaseCompleteRef = useRef(onPhaseComplete)
@@ -19,7 +25,8 @@ export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 *
   // Actualizar timer cuando cambia la duración (al cambiar de asignatura)
   useEffect(() => {
     if (!isRunning && mode === 'pomodoro' && prevWorkDurationRef.current !== workDuration) {
-      setTimeLeft(phase === 'work' ? workDuration : breakDuration)
+      setPausedTimeLeft(phase === 'work' ? workDuration : breakDuration)
+      setDisplayTime(phase === 'work' ? workDuration : breakDuration)
     }
     prevWorkDurationRef.current = workDuration
   }, [workDuration, breakDuration, isRunning, mode, phase])
@@ -33,33 +40,62 @@ export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 *
 
   const start = useCallback(() => {
     if (!isRunning) {
+      const now = Date.now()
+      if (mode === 'pomodoro') {
+        // Calcular cuándo debe terminar basado en el tiempo restante
+        setTargetEndTime(now + pausedTimeLeft * 1000)
+      } else {
+        // Guardar cuándo empezamos (ajustado por tiempo ya transcurrido)
+        setStartTime(now - pausedElapsed * 1000)
+      }
       setIsRunning(true)
     }
-  }, [isRunning])
+  }, [isRunning, mode, pausedTimeLeft, pausedElapsed])
 
   const pause = useCallback(() => {
-    setIsRunning(false)
-    clearTimer()
-  }, [clearTimer])
+    if (isRunning) {
+      const now = Date.now()
+      if (mode === 'pomodoro') {
+        // Guardar tiempo restante real
+        const remaining = Math.max(0, Math.ceil((targetEndTime - now) / 1000))
+        setPausedTimeLeft(remaining)
+      } else {
+        // Guardar tiempo transcurrido real
+        const elapsed = Math.floor((now - startTime) / 1000)
+        setPausedElapsed(elapsed)
+      }
+      setIsRunning(false)
+      clearTimer()
+    }
+  }, [isRunning, mode, targetEndTime, startTime, clearTimer])
 
   const reset = useCallback(() => {
     setIsRunning(false)
     clearTimer()
     if (mode === 'pomodoro') {
       setPhase('work')
-      setTimeLeft(workDuration)
+      setPausedTimeLeft(workDuration)
+      setDisplayTime(workDuration)
+      setTargetEndTime(null)
     } else {
-      setElapsedTime(0)
+      setPausedElapsed(0)
+      setDisplayTime(0)
+      setStartTime(null)
     }
   }, [mode, clearTimer, workDuration])
 
   // Reiniciar sin parar (para cambio de asignatura en focus mode)
   const restart = useCallback((newWorkDuration) => {
     if (mode === 'pomodoro') {
+      const duration = newWorkDuration || workDuration
       setPhase('work')
-      setTimeLeft(newWorkDuration || workDuration)
+      setPausedTimeLeft(duration)
+      setDisplayTime(duration)
+      if (isRunning) {
+        setTargetEndTime(Date.now() + duration * 1000)
+      }
     }
-  }, [mode, workDuration])
+  }, [mode, workDuration, isRunning])
 
   const switchMode = useCallback((newMode) => {
     setIsRunning(false)
@@ -67,9 +103,13 @@ export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 *
     setMode(newMode)
     if (newMode === 'pomodoro') {
       setPhase('work')
-      setTimeLeft(workDuration)
+      setPausedTimeLeft(workDuration)
+      setDisplayTime(workDuration)
+      setTargetEndTime(null)
     } else {
-      setElapsedTime(0)
+      setPausedElapsed(0)
+      setDisplayTime(0)
+      setStartTime(null)
     }
   }, [clearTimer, workDuration])
 
@@ -83,46 +123,58 @@ export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 *
   const skipBreak = useCallback(() => {
     if (mode === 'pomodoro' && phase === 'break') {
       setPhase('work')
-      setTimeLeft(workDuration)
+      setPausedTimeLeft(workDuration)
+      setDisplayTime(workDuration)
       setIsRunning(false)
+      setTargetEndTime(null)
       clearTimer()
     }
   }, [mode, phase, workDuration, clearTimer])
 
-  // Timer logic
+  // Timer logic - actualiza display basado en tiempo real
   useEffect(() => {
     if (!isRunning) return
 
-    intervalRef.current = setInterval(() => {
+    const tick = () => {
+      const now = Date.now()
+
       if (mode === 'pomodoro') {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            // Session complete
-            if (phase === 'work') {
-              setPomodoroCount((c) => c + 1)
-              completeSession(workDuration)
-              setPhase('break')
-              onPhaseCompleteRef.current?.('work')
-              return breakDuration
-            } else {
-              setPhase('work')
-              onPhaseCompleteRef.current?.('break')
-              return workDuration
-            }
+        const remaining = Math.max(0, Math.ceil((targetEndTime - now) / 1000))
+        setDisplayTime(remaining)
+
+        if (remaining <= 0) {
+          // Session complete
+          if (phase === 'work') {
+            setPomodoroCount((c) => c + 1)
+            completeSession(workDuration)
+            setPhase('break')
+            setPausedTimeLeft(breakDuration)
+            setTargetEndTime(now + breakDuration * 1000)
+            onPhaseCompleteRef.current?.('work')
+          } else {
+            setPhase('work')
+            setPausedTimeLeft(workDuration)
+            setTargetEndTime(now + workDuration * 1000)
+            onPhaseCompleteRef.current?.('break')
           }
-          return prev - 1
-        })
+        }
       } else {
-        setElapsedTime((prev) => prev + 1)
+        const elapsed = Math.floor((now - startTime) / 1000)
+        setDisplayTime(elapsed)
+        setPausedElapsed(elapsed)
       }
-    }, 1000)
+    }
+
+    // Tick inmediato y luego cada 100ms para mayor precisión
+    tick()
+    intervalRef.current = setInterval(tick, 100)
 
     return clearTimer
-  }, [isRunning, mode, phase, clearTimer, completeSession, workDuration, breakDuration])
+  }, [isRunning, mode, phase, targetEndTime, startTime, clearTimer, completeSession, workDuration, breakDuration])
 
-  const displayTime = mode === 'pomodoro' ? timeLeft : elapsedTime
+  const elapsedTime = mode === 'free' ? displayTime : 0
   const progress = mode === 'pomodoro'
-    ? 1 - (timeLeft / (phase === 'work' ? workDuration : breakDuration))
+    ? 1 - (displayTime / (phase === 'work' ? workDuration : breakDuration))
     : null
 
   return {
