@@ -696,9 +696,16 @@ export function SettingsPanel({
               className="border-t border-[var(--border)] px-6 py-4"
               style={{ paddingBottom: 'max(16px, var(--safe-area-bottom))' }}
             >
-              <p className="text-center text-[11px] text-[var(--text-tertiary)]">
-                Denso v1.0
-              </p>
+              <div className="flex items-center justify-center gap-3 text-[11px] text-[var(--text-tertiary)]">
+                <span>Denso v1.0</span>
+                <span>·</span>
+                <a
+                  href="/privacy"
+                  className="transition-colors hover:text-[var(--text-secondary)]"
+                >
+                  Privacidad
+                </a>
+              </div>
             </motion.div>
           </motion.div>
         </>

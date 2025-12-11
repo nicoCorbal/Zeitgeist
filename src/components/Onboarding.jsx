@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, Target, BookOpen, ChevronRight, Check } from 'lucide-react'
+import { Clock, Target, BookOpen, ChevronRight, Check, Shield } from 'lucide-react'
 import { DURATIONS, EASINGS } from '../utils/animations'
 
 const STEPS = [
@@ -9,6 +9,13 @@ const STEPS = [
     icon: Clock,
     title: 'Bienvenido a Denso',
     description: 'Tu compañero de estudio minimalista. Pomodoro o tiempo libre, tú decides.',
+  },
+  {
+    id: 'data',
+    icon: Shield,
+    title: 'Tus datos son tuyos',
+    description: 'Todo se guarda en tu dispositivo, no en la nube. Desde ajustes puedes descargar un archivo con tus datos y subirlo en otro dispositivo o navegador.',
+    warning: 'Si borras los datos del navegador o cambias de dispositivo sin copia, perderás tu progreso.',
   },
   {
     id: 'goal',
@@ -115,9 +122,18 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
             </h1>
 
             {/* Description */}
-            <p className="mb-8 text-[14px] text-[var(--text-secondary)]">
+            <p className="text-[14px] text-[var(--text-secondary)]">
               {step.description}
             </p>
+
+            {/* Warning */}
+            {step.warning && (
+              <p className="mt-3 text-[12px] text-amber-600 dark:text-amber-500">
+                {step.warning}
+              </p>
+            )}
+
+            <div className="mb-8" />
 
             {/* Goal input */}
             {step.inputType === 'goal' && (

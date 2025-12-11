@@ -17,6 +17,7 @@ import { OfflineBanner } from './components/OfflineBanner'
 import { Onboarding } from './components/Onboarding'
 import { AchievementToast } from './components/AchievementToast'
 import { Landing } from './components/Landing'
+import { Privacy } from './components/Privacy'
 import { formatTime, formatDuration } from './utils/time'
 import { EMOJIS } from './data/emojis'
 import './index.css'
@@ -946,6 +947,7 @@ function App() {
   return (
     <Routes>
       <Route path="/landing" element={<Landing onEnterApp={handleEnterApp} />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="/app" element={<TimerApp />} />
       <Route
         path="/"
