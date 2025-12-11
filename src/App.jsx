@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ArrowLeft, BarChart2, Trash2, CheckSquare, Pencil } from 'lucide-react'
 import { useStats } from './hooks/useStats'
@@ -15,6 +16,7 @@ import { Toast } from './components/Toast'
 import { OfflineBanner } from './components/OfflineBanner'
 import { Onboarding } from './components/Onboarding'
 import { AchievementToast } from './components/AchievementToast'
+import { Landing } from './components/Landing'
 import { formatTime, formatDuration } from './utils/time'
 import { EMOJIS } from './data/emojis'
 import './index.css'
@@ -70,7 +72,7 @@ function AnimatedTime({ time }) {
   )
 }
 
-function App() {
+function TimerApp() {
   const [showSubjects, setShowSubjects] = useState(false)
   const [newSubject, setNewSubject] = useState('')
   const [newSubjectEmoji, setNewSubjectEmoji] = useState(null)
@@ -921,6 +923,35 @@ function App() {
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+function App() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [hasVisited, setHasVisited] = useLocalStorage('denso-visited', false)
+
+  const handleEnterApp = () => {
+    setHasVisited(true)
+    navigate('/app')
+  }
+
+  // Redirect first-time visitors to landing (unless already on /landing)
+  useEffect(() => {
+    if (!hasVisited && location.pathname !== '/landing' && location.pathname !== '/') {
+      navigate('/landing')
+    }
+  }, [hasVisited, location.pathname, navigate])
+
+  return (
+    <Routes>
+      <Route path="/landing" element={<Landing onEnterApp={handleEnterApp} />} />
+      <Route path="/app" element={<TimerApp />} />
+      <Route
+        path="/"
+        element={hasVisited ? <TimerApp /> : <Landing onEnterApp={handleEnterApp} />}
+      />
+    </Routes>
   )
 }
 

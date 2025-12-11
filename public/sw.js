@@ -7,7 +7,7 @@ const CACHE_NAME = 'denso-v1'
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/favicon.ico',
+  '/logo.svg',
 ]
 
 // Install event - cache static assets

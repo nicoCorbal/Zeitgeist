@@ -31,37 +31,54 @@ const itemVariants = {
 function DataManagementSection() {
   const fileInputRef = useRef(null)
   const [importStatus, setImportStatus] = useState(null)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [pendingFile, setPendingFile] = useState(null)
   const dataStats = getDataStats()
 
   const handleExport = () => {
     const result = exportData()
     if (!result.success) {
-      setImportStatus({ type: 'error', message: 'Error al exportar' })
+      setImportStatus({ type: 'error', message: 'Error al guardar' })
+      setTimeout(() => setImportStatus(null), 3000)
+    } else {
+      setImportStatus({ type: 'success', message: 'Copia guardada correctamente' })
       setTimeout(() => setImportStatus(null), 3000)
     }
   }
 
-  const handleImport = async (e) => {
+  const handleFileSelect = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setPendingFile(file)
+    setShowConfirm(true)
+    e.target.value = ''
+  }
 
-    const result = await importData(file)
+  const handleConfirmImport = async () => {
+    if (!pendingFile) return
+
+    const result = await importData(pendingFile)
+    setShowConfirm(false)
+    setPendingFile(null)
+
     if (result.success) {
       setImportStatus({
         type: 'success',
-        message: `Importado: ${result.stats.sessions} sesiones, ${result.stats.subjects} asignaturas`,
+        message: `Restaurado: ${result.stats.sessions} sesiones, ${result.stats.subjects} materias`,
       })
       setTimeout(() => {
         setImportStatus(null)
-        window.location.reload() // Reload to apply imported data
+        window.location.reload()
       }, 2000)
     } else {
-      setImportStatus({ type: 'error', message: result.error || 'Error al importar' })
+      setImportStatus({ type: 'error', message: result.error || 'Error al restaurar' })
       setTimeout(() => setImportStatus(null), 3000)
     }
+  }
 
-    // Reset input
-    e.target.value = ''
+  const handleCancelImport = () => {
+    setShowConfirm(false)
+    setPendingFile(null)
   }
 
   return (
@@ -69,9 +86,13 @@ function DataManagementSection() {
       <div className="flex items-center gap-2 text-[var(--text-secondary)]">
         <Database size={12} aria-hidden="true" />
         <span id="data-section" className="text-[10px] font-semibold uppercase tracking-widest">
-          Datos
+          Copia de seguridad
         </span>
       </div>
+
+      <p className="mt-2 text-[12px] text-[var(--text-tertiary)]">
+        Guarda tus datos para transferirlos a otro dispositivo o restaurarlos más tarde.
+      </p>
 
       {/* Stats */}
       <div className="mt-4 grid grid-cols-2 gap-3 text-center">
@@ -86,30 +107,80 @@ function DataManagementSection() {
       </div>
 
       {/* Buttons */}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 space-y-2">
         <button
           onClick={handleExport}
-          className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5 text-[13px] font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg-secondary)]"
+          className="flex w-full items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-left transition-colors hover:bg-[var(--bg-secondary)]"
         >
-          <Download size={14} aria-hidden="true" />
-          Exportar
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-secondary)]">
+            <Download size={16} className="text-[var(--text)]" aria-hidden="true" />
+          </div>
+          <div>
+            <div className="text-[13px] font-medium text-[var(--text)]">Guardar copia</div>
+            <div className="text-[11px] text-[var(--text-tertiary)]">Descarga un archivo con todos tus datos</div>
+          </div>
         </button>
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5 text-[13px] font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg-secondary)]"
+          className="flex w-full items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-left transition-colors hover:bg-[var(--bg-secondary)]"
         >
-          <Upload size={14} aria-hidden="true" />
-          Importar
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-secondary)]">
+            <Upload size={16} className="text-[var(--text)]" aria-hidden="true" />
+          </div>
+          <div>
+            <div className="text-[13px] font-medium text-[var(--text)]">Restaurar datos</div>
+            <div className="text-[11px] text-[var(--text-tertiary)]">Carga una copia de seguridad anterior</div>
+          </div>
         </button>
         <input
           ref={fileInputRef}
           type="file"
           accept=".json"
-          onChange={handleImport}
+          onChange={handleFileSelect}
           className="hidden"
-          aria-label="Seleccionar archivo para importar"
+          aria-label="Seleccionar archivo para restaurar"
         />
       </div>
+
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+            onClick={handleCancelImport}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm rounded-xl bg-[var(--bg-solid)] p-5 shadow-xl"
+            >
+              <h3 className="text-[15px] font-semibold text-[var(--text)]">¿Restaurar datos?</h3>
+              <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+                Esto reemplazará todos tus datos actuales con los del archivo seleccionado. Esta acción no se puede deshacer.
+              </p>
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={handleCancelImport}
+                  className="flex-1 rounded-lg border border-[var(--border)] px-4 py-2.5 text-[13px] font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg-secondary)]"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirmImport}
+                  className="flex-1 rounded-lg bg-[var(--text)] px-4 py-2.5 text-[13px] font-medium text-[var(--bg)] transition-opacity hover:opacity-90"
+                >
+                  Restaurar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Status message */}
       <AnimatePresence>

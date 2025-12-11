@@ -4,7 +4,26 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Make time dense" />
+    <meta name="description" content="Denso es un temporizador de estudio minimalista con técnica Pomodoro, seguimiento de materias, logros y modo offline. Haz tu tiempo más denso." />
+    <meta name="keywords" content="pomodoro, temporizador, estudio, productividad, focus, timer, estudiantes" />
+    <meta name="author" content="Denso" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://denso.vercel.app/" />
+    <meta property="og:title" content="Denso - Temporizador de estudio minimalista" />
+    <meta property="og:description" content="Haz tu tiempo más denso. Pomodoro, seguimiento de materias, logros y modo offline." />
+    <meta property="og:image" content="https://denso.vercel.app/og-image.png" />
+    <meta property="og:locale" content="es_ES" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://denso.vercel.app/" />
+    <meta name="twitter:title" content="Denso - Temporizador de estudio minimalista" />
+    <meta name="twitter:description" content="Haz tu tiempo más denso. Pomodoro, seguimiento de materias, logros y modo offline." />
+    <meta name="twitter:image" content="https://denso.vercel.app/og-image.png" />
+
+    <!-- Theme -->
     <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -12,8 +31,35 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Denso" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/logo.svg" />
-    <title>Denso</title>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Denso - Temporizador de estudio minimalista</title>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Denso",
+      "description": "Temporizador de estudio minimalista con técnica Pomodoro, seguimiento de materias, logros y modo offline.",
+      "url": "https://denso.vercel.app",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "featureList": [
+        "Técnica Pomodoro",
+        "Temporizador libre",
+        "Seguimiento de materias",
+        "Sistema de logros",
+        "8 temas visuales",
+        "Modo offline",
+        "PWA instalable"
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
