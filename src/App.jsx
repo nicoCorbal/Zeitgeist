@@ -1,17 +1,29 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sun, Moon, ChevronDown, Play, Pause, Plus, X, BarChart2, Settings, RotateCcw, Check, ChevronRight, ArrowLeft } from 'lucide-react'
+import { Sun, Moon, ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ChevronRight, ArrowLeft, BarChart2 } from 'lucide-react'
 import { useStats } from './hooks/useStats'
 import { useTimer } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
 import { useNotification } from './hooks/useNotification'
 import { useToast } from './hooks/useToast'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { StatsPanel } from './components/StatsPanel'
-import { SettingsPanel } from './components/SettingsPanel'
+import { useHaptics } from './hooks/useHaptics'
+import { useOnboarding } from './hooks/useOnboarding'
+import { useAchievements } from './hooks/useAchievements'
+import { Confetti, useCelebration } from './components/Confetti'
 import { Toast } from './components/Toast'
+import { OfflineBanner } from './components/OfflineBanner'
+import { Onboarding } from './components/Onboarding'
+import { AchievementToast } from './components/AchievementToast'
+import { EnergyCheck } from './components/EnergyCheck'
+import { BreathingRitual } from './components/BreathingRitual'
+import { SessionReflection } from './components/SessionReflection'
 import { formatTime, formatDuration } from './utils/time'
 import './index.css'
+
+// Lazy load heavy panels
+const StatsPanel = lazy(() => import('./components/StatsPanel').then(m => ({ default: m.StatsPanel })))
+const SettingsPanel = lazy(() => import('./components/SettingsPanel').then(m => ({ default: m.SettingsPanel })))
 
 // Animated digit component with smooth slide
 function Digit({ value }) {
@@ -70,11 +82,24 @@ function App() {
   const [newTodoText, setNewTodoText] = useState('')
   const [soundEnabled, setSoundEnabled] = useLocalStorage('zeitgeist-sound', true)
   const [soundType, setSoundType] = useLocalStorage('zeitgeist-sound-type', 'bell')
+  const [deepFocusEnabled, setDeepFocusEnabled] = useLocalStorage('zeitgeist-deep-focus', false)
+  const [dailyGoal, setDailyGoal] = useLocalStorage('zeitgeist-daily-goal', 2 * 60 * 60) // 2 hours default
+
+  // Energy-aware focus state
+  const [showEnergyCheck, setShowEnergyCheck] = useState(false)
+  const [showBreathingRitual, setShowBreathingRitual] = useState(false)
+  const [showSessionReflection, setShowSessionReflection] = useState(false)
+  const [currentEnergy, setCurrentEnergy] = useState(null)
+  const [pendingSessionDuration, setPendingSessionDuration] = useState(null)
 
   const { theme, setTheme, toggle: toggleTheme, isDark } = useTheme()
   const { notify, requestPermission } = useNotification()
   const { toast, show: showToast } = useToast()
+  const haptics = useHaptics()
+  const celebration = useCelebration()
+  const { showOnboarding, completeOnboarding } = useOnboarding()
   const {
+    sessions,
     subjects,
     currentSubject,
     weeklyGoal,
@@ -89,16 +114,28 @@ function App() {
     deleteTodo,
   } = useStats()
 
+  // Achievement notifications
+  const { newAchievement, showAchievementToast, dismissAchievement } = useAchievements(sessions, stats)
+
   const current = subjects.find((s) => s.id === currentSubject)
   const workDuration = current?.workDuration || 25 * 60
   const breakDuration = current?.breakDuration || 5 * 60
   const longBreakDuration = current?.longBreakDuration || 15 * 60
   const longBreakInterval = current?.longBreakInterval ?? 4
 
-  const handlePhaseComplete = useCallback((phase) => {
+  const handlePhaseComplete = useCallback((phase, duration) => {
     if (soundEnabled) notify(phase, soundType)
-    showToast(phase === 'work' ? 'Pomodoro completado' : 'Descanso terminado')
-  }, [notify, soundEnabled, soundType, showToast])
+    // Haptic feedback for work completion
+    if (phase === 'work') {
+      haptics.success()
+      // Show reflection instead of immediate toast
+      setPendingSessionDuration(duration || workDuration)
+      setShowSessionReflection(true)
+    } else {
+      haptics.medium()
+      showToast('Descanso terminado')
+    }
+  }, [notify, soundEnabled, soundType, showToast, haptics, workDuration])
 
   const timer = useTimer(addSession, handlePhaseComplete, workDuration, breakDuration, longBreakDuration, longBreakInterval)
 
@@ -111,8 +148,8 @@ function App() {
   // Dynamic title
   useEffect(() => {
     document.title = timer.isRunning
-      ? `${formatTime(timer.displayTime)} · Zeitgeist`
-      : 'Zeitgeist'
+      ? `${formatTime(timer.displayTime)} · Denso`
+      : 'Denso'
   }, [timer.displayTime, timer.isRunning])
 
   // Request notifications
@@ -122,33 +159,93 @@ function App() {
     return () => window.removeEventListener('click', handler)
   }, [requestPermission])
 
+  const handleToggle = useCallback(() => {
+    haptics.light()
+    if (timer.isRunning) {
+      timer.pause()
+    } else {
+      // Show energy check before starting (only for pomodoro mode, work phase)
+      if (timer.mode === 'pomodoro' && timer.phase === 'work' && !currentEnergy) {
+        setShowEnergyCheck(true)
+      } else {
+        timer.start()
+      }
+    }
+  }, [haptics, timer.isRunning, timer.pause, timer.start, timer.mode, timer.phase, currentEnergy])
+
   // Keyboard shortcuts
   useEffect(() => {
     const handler = (e) => {
       if (e.target.tagName === 'INPUT') return
       if (e.code === 'Space') {
         e.preventDefault()
-        timer.isRunning ? timer.pause() : timer.start()
+        handleToggle()
       }
       if (e.key === 'r' || e.key === 'R') timer.reset()
       if (e.key === 's' || e.key === 'S') timer.skipBreak()
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [timer.isRunning, timer.pause, timer.start, timer.reset, timer.skipBreak])
+  }, [timer.reset, timer.skipBreak, handleToggle])
 
-  const handleToggle = () => timer.isRunning ? timer.pause() : timer.start()
+  // Handle energy selection
+  const handleEnergySelect = (energy) => {
+    setCurrentEnergy(energy)
+    setShowEnergyCheck(false)
+    // Apply suggested duration based on energy level
+    timer.restart(energy.suggestedMinutes * 60)
+    setShowBreathingRitual(true)
+  }
+
+  // Handle energy skip
+  const handleEnergySkip = () => {
+    setShowEnergyCheck(false)
+    timer.start()
+  }
+
+  // Handle breathing complete
+  const handleBreathingComplete = () => {
+    setShowBreathingRitual(false)
+    timer.start()
+  }
+
+  // Handle session reflection
+  const handleReflectionSelect = (flowLevel) => {
+    setShowSessionReflection(false)
+    celebration.celebrate()
+    showToast('Pomodoro completado')
+
+    // Add session with energy and flow data
+    addSession(
+      pendingSessionDuration || workDuration,
+      currentSubject,
+      currentEnergy?.id || null,
+      flowLevel?.value || null
+    )
+
+    // Reset energy for next session
+    setCurrentEnergy(null)
+    setPendingSessionDuration(null)
+  }
 
   const handleSave = () => {
     if (timer.mode === 'free' && timer.elapsedTime > 60 && !timer.isRunning) {
+      haptics.success()
+      celebration.celebrate()
       timer.completeSession(timer.elapsedTime)
       timer.reset()
       showToast('Sesión guardada')
     }
   }
 
+  const handleReset = () => {
+    haptics.medium()
+    timer.reset()
+  }
+
   const handleAddSubject = () => {
     if (newSubject.trim()) {
+      haptics.light()
       addSubject(newSubject.trim())
       setNewSubject('')
       setIsAddingSubject(false)
@@ -156,36 +253,70 @@ function App() {
   }
 
   const weekProgress = Math.min((stats.weekTotal + currentSessionTime) / weeklyGoal, 1)
+  const dayProgress = Math.min((stats.todayTotal + currentSessionTime) / dailyGoal, 1)
   const canSave = timer.mode === 'free' && timer.elapsedTime > 60 && !timer.isRunning
   const isFocusMode = timer.isRunning && timer.mode === 'pomodoro' && timer.phase === 'work'
   const isBreakMode = timer.isRunning && timer.mode === 'pomodoro' && timer.phase === 'break'
+  const isDeepFocus = isFocusMode && deepFocusEnabled
+
+  // Handler for onboarding subject creation
+  const handleOnboardingAddSubject = (name, emoji) => {
+    addSubject(name, emoji)
+  }
+
+  // Show onboarding for new users
+  if (showOnboarding) {
+    return (
+      <Onboarding
+        onComplete={completeOnboarding}
+        onGoalChange={setWeeklyGoal}
+        onAddSubject={handleOnboardingAddSubject}
+      />
+    )
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--bg)] text-[var(--text)] transition-colors duration-500">
+      {/* Skip link for keyboard users */}
+      <a href="#main-timer" className="skip-link">
+        Saltar al temporizador
+      </a>
 
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5">
-        <button
-          onClick={() => setShowStats(true)}
-          className="text-[13px] font-semibold tracking-tight text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
-        >
-          Zeitgeist
-        </button>
+      <motion.header
+        className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5"
+        style={{ paddingTop: 'max(16px, var(--safe-area-top))' }}
+        animate={{
+          opacity: isDeepFocus ? 0 : 1,
+          pointerEvents: isDeepFocus ? 'none' : 'auto'
+        }}
+        transition={{ duration: 0.4 }}
+      >
+        <img src="/logo.svg" alt="Denso" className="h-8" style={{ filter: 'var(--logo-filter)' }} />
         <div className="flex items-center gap-1">
+          <button
+            onClick={() => setShowStats(true)}
+            className="p-2 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
+            aria-label="Ver estadísticas"
+          >
+            <BarChart2 size={16} strokeWidth={1.5} aria-hidden="true" />
+          </button>
           <button
             onClick={() => setShowSettings(true)}
             className="p-2 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
+            aria-label="Abrir ajustes"
           >
-            <Settings size={16} strokeWidth={1.5} />
+            <Settings size={16} strokeWidth={1.5} aria-hidden="true" />
           </button>
           <button
             onClick={toggleTheme}
             className="p-2 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
+            aria-label={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
           >
-            {isDark ? <Sun size={16} strokeWidth={1.5} /> : <Moon size={16} strokeWidth={1.5} />}
+            {isDark ? <Sun size={16} strokeWidth={1.5} aria-hidden="true" /> : <Moon size={16} strokeWidth={1.5} aria-hidden="true" />}
           </button>
         </div>
-      </header>
+      </motion.header>
 
       {/* Main */}
       <main className="flex flex-1 flex-col items-center justify-center">
@@ -377,6 +508,7 @@ function App() {
               )}
             </AnimatePresence>
             <motion.button
+              id="main-timer"
               onClick={handleToggle}
               className="select-none font-semibold leading-none tracking-[-0.02em] tabular-nums outline-none"
               animate={{
@@ -387,6 +519,8 @@ function App() {
                     : 'min(140px, 20vw)'
               }}
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              aria-label={`${timer.isRunning ? 'Pausar' : 'Iniciar'} temporizador. Tiempo: ${formatTime(timer.displayTime)}`}
+              aria-live="polite"
             >
               <AnimatedTime time={timer.displayTime} />
             </motion.button>
@@ -399,6 +533,7 @@ function App() {
                   transition={{ duration: 0.3, delay: 0.1 }}
                   onClick={timer.skipBreak}
                   className="mt-4 text-[12px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors"
+                  aria-label="Saltar descanso e iniciar nueva sesión"
                 >
                   saltar →
                 </motion.button>
@@ -451,18 +586,20 @@ function App() {
             }}
           >
             <button
-              onClick={timer.reset}
+              onClick={handleReset}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-secondary)] transition-colors hover:border-[var(--text-tertiary)] hover:text-[var(--text)]"
+              aria-label="Reiniciar temporizador"
             >
-              <RotateCcw size={18} strokeWidth={1.5} />
+              <RotateCcw size={18} strokeWidth={1.5} aria-hidden="true" />
             </button>
 
             <motion.button
               whileTap={{ scale: 0.96 }}
               onClick={handleToggle}
               className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--text)] text-[var(--bg)]"
+              aria-label={timer.isRunning ? 'Pausar temporizador' : 'Iniciar temporizador'}
             >
-              {timer.isRunning ? <Pause size={22} /> : <Play size={22} className="ml-0.5" />}
+              {timer.isRunning ? <Pause size={22} aria-hidden="true" /> : <Play size={22} className="ml-0.5" aria-hidden="true" />}
             </motion.button>
 
             <button
@@ -473,8 +610,10 @@ function App() {
                   ? 'border-[var(--text)] text-[var(--text)]'
                   : 'pointer-events-none border-[var(--border)] text-[var(--border)]'
               }`}
+              aria-label="Guardar sesión"
+              aria-disabled={!canSave}
             >
-              <Check size={18} strokeWidth={1.5} />
+              <Check size={18} strokeWidth={1.5} aria-hidden="true" />
             </button>
           </motion.div>
 
@@ -482,38 +621,83 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="flex items-center justify-center gap-3 px-4 py-4 text-[11px] tabular-nums text-[var(--text-tertiary)] sm:gap-5 sm:px-6 sm:py-5 sm:text-[12px]">
-        <span>{stats.streak} días</span>
-        <div className="h-1 w-16 rounded-full bg-[var(--border)]">
-          <motion.div
-            className="h-full rounded-full bg-[var(--text-tertiary)]"
-            animate={{ width: `${weekProgress * 100}%` }}
-            transition={{ duration: 0.4 }}
-          />
+      <motion.footer
+        className="flex items-center justify-center gap-2 px-4 py-4 text-[11px] tabular-nums text-[var(--text-tertiary)] sm:gap-4 sm:px-6 sm:py-5 sm:text-[12px]"
+        style={{ paddingBottom: 'max(16px, var(--safe-area-bottom))' }}
+        aria-label="Resumen de progreso"
+        animate={{
+          opacity: isDeepFocus ? 0 : 1,
+          pointerEvents: isDeepFocus ? 'none' : 'auto'
+        }}
+        transition={{ duration: 0.4 }}
+      >
+        <span aria-label={`Racha de ${stats.streak} días consecutivos`}>{stats.streak} días</span>
+        <span className="text-[var(--border)]">·</span>
+        {/* Daily progress */}
+        <div className="flex items-center gap-1.5">
+          <div
+            className="h-1 w-10 rounded-full bg-[var(--border)] sm:w-12"
+            role="progressbar"
+            aria-valuenow={Math.round(dayProgress * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Progreso diario"
+          >
+            <motion.div
+              className="h-full rounded-full bg-[var(--text-tertiary)]"
+              animate={{ width: `${dayProgress * 100}%` }}
+              transition={{ duration: 0.4 }}
+            />
+          </div>
+          <span className="hidden sm:inline">hoy</span>
         </div>
-        <span>{formatDuration(stats.weekTotal + currentSessionTime)} / {formatDuration(weeklyGoal)}</span>
-      </footer>
+        <span className="text-[var(--border)]">·</span>
+        {/* Weekly progress */}
+        <div className="flex items-center gap-1.5">
+          <div
+            className="h-1 w-10 rounded-full bg-[var(--border)] sm:w-12"
+            role="progressbar"
+            aria-valuenow={Math.round(weekProgress * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Progreso semanal"
+          >
+            <motion.div
+              className="h-full rounded-full bg-[var(--text-tertiary)]"
+              animate={{ width: `${weekProgress * 100}%` }}
+              transition={{ duration: 0.4 }}
+            />
+          </div>
+          <span>{formatDuration(stats.weekTotal + currentSessionTime)}</span>
+        </div>
+      </motion.footer>
 
-      {/* Panels */}
-      <StatsPanel isOpen={showStats} onClose={() => setShowStats(false)} stats={stats} subjects={subjects} weeklyGoal={weeklyGoal} />
-      <SettingsPanel
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-        weeklyGoal={weeklyGoal}
-        onWeeklyGoalChange={setWeeklyGoal}
-        soundEnabled={soundEnabled}
-        onSoundToggle={() => setSoundEnabled(!soundEnabled)}
-        soundType={soundType}
-        onSoundTypeChange={setSoundType}
-        currentSubject={current}
-        onSubjectUpdate={(updates) => updateSubject(currentSubject, updates)}
-        theme={theme}
-        onThemeChange={setTheme}
-      />
+      {/* Panels - lazy loaded */}
+      <Suspense fallback={null}>
+        <StatsPanel isOpen={showStats} onClose={() => setShowStats(false)} stats={stats} subjects={subjects} weeklyGoal={weeklyGoal} sessions={sessions} />
+        <SettingsPanel
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          weeklyGoal={weeklyGoal}
+          onWeeklyGoalChange={setWeeklyGoal}
+          soundEnabled={soundEnabled}
+          onSoundToggle={() => setSoundEnabled(!soundEnabled)}
+          soundType={soundType}
+          onSoundTypeChange={setSoundType}
+          currentSubject={current}
+          onSubjectUpdate={(updates) => updateSubject(currentSubject, updates)}
+          theme={theme}
+          onThemeChange={setTheme}
+          deepFocusEnabled={deepFocusEnabled}
+          onDeepFocusToggle={() => setDeepFocusEnabled(!deepFocusEnabled)}
+          dailyGoal={dailyGoal}
+          onDailyGoalChange={setDailyGoal}
+        />
+      </Suspense>
 
-      {/* Focus mode panels - simétrico: asignaturas izquierda, todos derecha */}
+      {/* Focus mode panels - simétrico: asignaturas izquierda, todos derecha (hidden in deep focus) */}
       <AnimatePresence>
-        {isFocusMode && (
+        {isFocusMode && !isDeepFocus && (
           <>
             {/* Selector de asignaturas - izquierda (oculto en móvil) */}
             <motion.div
@@ -628,7 +812,52 @@ function App() {
         )}
       </AnimatePresence>
 
+      {/* Celebration animation */}
+      <Confetti
+        isActive={celebration.isActive}
+        onComplete={celebration.reset}
+        color="var(--text)"
+      />
+
+      {/* Offline indicator */}
+      <OfflineBanner />
+
+      {/* Achievement notification */}
+      <AchievementToast
+        achievement={newAchievement}
+        isVisible={showAchievementToast}
+        onComplete={dismissAchievement}
+      />
+
       <Toast message={toast.message} type={toast.type} isVisible={toast.isVisible} />
+
+      {/* Energy-aware focus flow */}
+      <AnimatePresence>
+        {showEnergyCheck && (
+          <EnergyCheck
+            onSelect={handleEnergySelect}
+            onSkip={handleEnergySkip}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showBreathingRitual && (
+          <BreathingRitual
+            onComplete={handleBreathingComplete}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showSessionReflection && (
+          <SessionReflection
+            onSelect={handleReflectionSelect}
+            duration={pendingSessionDuration}
+            energyLevel={currentEnergy}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

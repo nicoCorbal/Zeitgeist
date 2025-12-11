@@ -147,14 +147,14 @@ export function useTimer(onSessionComplete, onPhaseComplete, workDuration = 25 *
           if (phase === 'work') {
             const newCount = pomodoroCount + 1
             setPomodoroCount(newCount)
-            completeSession(workDuration)
+            // Don't add session here - let App.jsx handle it after reflection
             setPhase('break')
             // Usar descanso largo si es múltiplo de longBreakInterval
             const isLongBreak = longBreakInterval > 0 && newCount % longBreakInterval === 0
             const nextBreak = isLongBreak ? longBreakDuration : breakDuration
             setPausedTimeLeft(nextBreak)
             setTargetEndTime(now + nextBreak * 1000)
-            onPhaseCompleteRef.current?.('work')
+            onPhaseCompleteRef.current?.('work', workDuration)
           } else {
             setPhase('work')
             setPausedTimeLeft(workDuration)
