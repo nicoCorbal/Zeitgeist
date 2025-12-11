@@ -7,7 +7,7 @@ const STEPS = [
   {
     id: 'welcome',
     icon: Clock,
-    title: 'Bienvenido a Zeitgeist',
+    title: 'Bienvenido a Denso',
     description: 'Tu compañero de estudio minimalista. Pomodoro o tiempo libre, tú decides.',
   },
   {

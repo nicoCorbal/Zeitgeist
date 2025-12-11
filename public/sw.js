@@ -1,9 +1,9 @@
 /**
- * Zeitgeist Service Worker
+ * Denso Service Worker
  * Provides offline functionality and caching
  */
 
-const CACHE_NAME = 'zeitgeist-v1'
+const CACHE_NAME = 'denso-v1'
 const STATIC_ASSETS = [
   '/',
   '/index.html',

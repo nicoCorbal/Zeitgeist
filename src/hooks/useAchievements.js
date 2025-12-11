@@ -6,7 +6,7 @@ import { getUnlockedAchievements, getNewAchievements, ACHIEVEMENTS } from '../da
  * Hook to manage achievements and detect new unlocks
  */
 export function useAchievements(sessions, stats) {
-  const [unlockedIds, setUnlockedIds] = useLocalStorage('zeitgeist-achievements', [])
+  const [unlockedIds, setUnlockedIds] = useLocalStorage('denso-achievements', [])
   const [newAchievement, setNewAchievement] = useState(null)
   const [showAchievementToast, setShowAchievementToast] = useState(false)
 

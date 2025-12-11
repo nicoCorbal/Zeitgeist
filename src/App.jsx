@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sun, Moon, ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ChevronRight, ArrowLeft, BarChart2 } from 'lucide-react'
+import { Sun, Moon, ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ChevronRight, ArrowLeft, BarChart2, Trash2 } from 'lucide-react'
 import { useStats } from './hooks/useStats'
 import { useTimer } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
@@ -15,9 +15,6 @@ import { Toast } from './components/Toast'
 import { OfflineBanner } from './components/OfflineBanner'
 import { Onboarding } from './components/Onboarding'
 import { AchievementToast } from './components/AchievementToast'
-import { EnergyCheck } from './components/EnergyCheck'
-import { BreathingRitual } from './components/BreathingRitual'
-import { SessionReflection } from './components/SessionReflection'
 import { formatTime, formatDuration } from './utils/time'
 import './index.css'
 
@@ -80,17 +77,12 @@ function App() {
   const [showSettings, setShowSettings] = useState(false)
   const [viewingTodosFor, setViewingTodosFor] = useState(null) // ID de asignatura para ver todos
   const [newTodoText, setNewTodoText] = useState('')
-  const [soundEnabled, setSoundEnabled] = useLocalStorage('zeitgeist-sound', true)
-  const [soundType, setSoundType] = useLocalStorage('zeitgeist-sound-type', 'bell')
-  const [deepFocusEnabled, setDeepFocusEnabled] = useLocalStorage('zeitgeist-deep-focus', false)
-  const [dailyGoal, setDailyGoal] = useLocalStorage('zeitgeist-daily-goal', 2 * 60 * 60) // 2 hours default
+  const [subjectToDelete, setSubjectToDelete] = useState(null) // Para modal de confirmación
+  const [soundEnabled, setSoundEnabled] = useLocalStorage('denso-sound', true)
+  const [soundType, setSoundType] = useLocalStorage('denso-sound-type', 'bell')
+  const [deepFocusEnabled, setDeepFocusEnabled] = useLocalStorage('denso-deep-focus', false)
+  const [dailyGoal, setDailyGoal] = useLocalStorage('denso-daily-goal', 2 * 60 * 60) // 2 hours default
 
-  // Energy-aware focus state
-  const [showEnergyCheck, setShowEnergyCheck] = useState(false)
-  const [showBreathingRitual, setShowBreathingRitual] = useState(false)
-  const [showSessionReflection, setShowSessionReflection] = useState(false)
-  const [currentEnergy, setCurrentEnergy] = useState(null)
-  const [pendingSessionDuration, setPendingSessionDuration] = useState(null)
 
   const { theme, setTheme, toggle: toggleTheme, isDark } = useTheme()
   const { notify, requestPermission } = useNotification()
@@ -112,6 +104,7 @@ function App() {
     addTodo,
     toggleTodo,
     deleteTodo,
+    deleteSubject,
   } = useStats()
 
   // Achievement notifications
@@ -125,17 +118,16 @@ function App() {
 
   const handlePhaseComplete = useCallback((phase, duration) => {
     if (soundEnabled) notify(phase, soundType)
-    // Haptic feedback for work completion
     if (phase === 'work') {
       haptics.success()
-      // Show reflection instead of immediate toast
-      setPendingSessionDuration(duration || workDuration)
-      setShowSessionReflection(true)
+      celebration.celebrate()
+      addSession(duration || workDuration)
+      showToast('Pomodoro completado')
     } else {
       haptics.medium()
       showToast('Descanso terminado')
     }
-  }, [notify, soundEnabled, soundType, showToast, haptics, workDuration])
+  }, [notify, soundEnabled, soundType, showToast, haptics, workDuration, celebration, addSession])
 
   const timer = useTimer(addSession, handlePhaseComplete, workDuration, breakDuration, longBreakDuration, longBreakInterval)
 
@@ -164,14 +156,9 @@ function App() {
     if (timer.isRunning) {
       timer.pause()
     } else {
-      // Show energy check before starting (only for pomodoro mode, work phase)
-      if (timer.mode === 'pomodoro' && timer.phase === 'work' && !currentEnergy) {
-        setShowEnergyCheck(true)
-      } else {
-        timer.start()
-      }
+      timer.start()
     }
-  }, [haptics, timer.isRunning, timer.pause, timer.start, timer.mode, timer.phase, currentEnergy])
+  }, [haptics, timer.isRunning, timer.pause, timer.start])
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -187,46 +174,6 @@ function App() {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [timer.reset, timer.skipBreak, handleToggle])
-
-  // Handle energy selection
-  const handleEnergySelect = (energy) => {
-    setCurrentEnergy(energy)
-    setShowEnergyCheck(false)
-    // Apply suggested duration based on energy level
-    timer.restart(energy.suggestedMinutes * 60)
-    setShowBreathingRitual(true)
-  }
-
-  // Handle energy skip
-  const handleEnergySkip = () => {
-    setShowEnergyCheck(false)
-    timer.start()
-  }
-
-  // Handle breathing complete
-  const handleBreathingComplete = () => {
-    setShowBreathingRitual(false)
-    timer.start()
-  }
-
-  // Handle session reflection
-  const handleReflectionSelect = (flowLevel) => {
-    setShowSessionReflection(false)
-    celebration.celebrate()
-    showToast('Pomodoro completado')
-
-    // Add session with energy and flow data
-    addSession(
-      pendingSessionDuration || workDuration,
-      currentSubject,
-      currentEnergy?.id || null,
-      flowLevel?.value || null
-    )
-
-    // Reset energy for next session
-    setCurrentEnergy(null)
-    setPendingSessionDuration(null)
-  }
 
   const handleSave = () => {
     if (timer.mode === 'free' && timer.elapsedTime > 60 && !timer.isRunning) {
@@ -433,7 +380,7 @@ function App() {
                         {subjects.map((s) => (
                           <div
                             key={s.id}
-                            className={`flex items-center px-3 py-2 transition-colors hover:bg-[var(--bg-secondary)] ${
+                            className={`group flex items-center px-3 py-2 transition-colors hover:bg-[var(--bg-secondary)] ${
                               s.id === currentSubject ? 'text-[var(--text)]' : 'text-[var(--text-secondary)]'
                             }`}
                           >
@@ -444,6 +391,17 @@ function App() {
                               {s.emoji && <span>{s.emoji}</span>}
                               {s.name}
                             </button>
+                            {subjects.length > 1 && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setSubjectToDelete(s)
+                                }}
+                                className="p-1 text-[var(--text-tertiary)] opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -831,31 +789,49 @@ function App() {
 
       <Toast message={toast.message} type={toast.type} isVisible={toast.isVisible} />
 
-      {/* Energy-aware focus flow */}
+      {/* Delete subject confirmation modal */}
       <AnimatePresence>
-        {showEnergyCheck && (
-          <EnergyCheck
-            onSelect={handleEnergySelect}
-            onSkip={handleEnergySkip}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showBreathingRitual && (
-          <BreathingRitual
-            onComplete={handleBreathingComplete}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showSessionReflection && (
-          <SessionReflection
-            onSelect={handleReflectionSelect}
-            duration={pendingSessionDuration}
-            energyLevel={currentEnergy}
-          />
+        {subjectToDelete && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSubjectToDelete(null)}
+              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed left-1/2 top-1/2 z-50 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-[var(--bg)] p-6 shadow-2xl"
+            >
+              <h3 className="text-[15px] font-semibold text-[var(--text)]">
+                ¿Eliminar asignatura?
+              </h3>
+              <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+                Se eliminará "{subjectToDelete.emoji} {subjectToDelete.name}" y todas sus tareas. Esta acción no se puede deshacer.
+              </p>
+              <div className="mt-6 flex gap-3">
+                <button
+                  onClick={() => setSubjectToDelete(null)}
+                  className="flex-1 rounded-lg border border-[var(--border)] px-4 py-2.5 text-[13px] font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-secondary)]"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    deleteSubject(subjectToDelete.id)
+                    setSubjectToDelete(null)
+                    setShowSubjects(false)
+                  }}
+                  className="flex-1 rounded-lg bg-red-500 px-4 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-red-600"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>

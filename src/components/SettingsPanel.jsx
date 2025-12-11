@@ -652,7 +652,7 @@ export function SettingsPanel({
               style={{ paddingBottom: 'max(16px, var(--safe-area-bottom))' }}
             >
               <p className="text-center text-[11px] text-[var(--text-tertiary)]">
-                Zeitgeist v1.0
+                Denso v1.0
               </p>
             </motion.div>
           </motion.div>

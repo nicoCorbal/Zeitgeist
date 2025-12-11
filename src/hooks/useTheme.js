@@ -3,7 +3,7 @@ import { useLocalStorage } from './useLocalStorage'
 import { THEMES } from '../data/themes'
 
 export function useTheme() {
-  const [themeId, setThemeId] = useLocalStorage('zeitgeist-theme', 'light')
+  const [themeId, setThemeId] = useLocalStorage('denso-theme', 'light')
 
   useEffect(() => {
     const theme = THEMES[themeId] || THEMES.light

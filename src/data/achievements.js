@@ -1,5 +1,5 @@
 /**
- * Achievement definitions for Zeitgeist
+ * Achievement definitions for Denso
  * Gamification system to encourage consistent study habits
  */
 

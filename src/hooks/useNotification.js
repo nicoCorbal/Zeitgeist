@@ -19,7 +19,7 @@ export function useNotification() {
           body,
           icon: '/favicon.ico',
           silent: true, // We handle sound separately
-          tag: 'zeitgeist-timer', // Replaces previous notification
+          tag: 'denso-timer', // Replaces previous notification
         })
       } catch (e) {
         console.warn('[Notification] Failed to show notification:', e)

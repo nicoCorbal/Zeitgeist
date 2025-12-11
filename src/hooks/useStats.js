@@ -34,26 +34,24 @@ const migrateSubject = (subject) => ({
 })
 
 export function useStats() {
-  const [sessions, setSessions] = useLocalStorage('zeitgeist-sessions', [])
-  const [rawSubjects, setSubjects] = useLocalStorage('zeitgeist-subjects', [
+  const [sessions, setSessions] = useLocalStorage('denso-sessions', [])
+  const [rawSubjects, setSubjects] = useLocalStorage('denso-subjects', [
     { id: '1', name: 'General', color: '#141414', icon: null, emoji: '💻', workDuration: 25 * 60, breakDuration: 5 * 60, todos: [] },
   ])
-  const [tags, setTags] = useLocalStorage('zeitgeist-tags', [])
+  const [tags, setTags] = useLocalStorage('denso-tags', [])
 
   // Migrar subjects existentes para añadir campos faltantes
   const subjects = rawSubjects.map(migrateSubject)
-  const [weeklyGoal, setWeeklyGoal] = useLocalStorage('zeitgeist-weekly-goal', 20 * 60 * 60) // 20 hours
-  const [currentSubject, setCurrentSubject] = useLocalStorage('zeitgeist-current-subject', '1')
+  const [weeklyGoal, setWeeklyGoal] = useLocalStorage('denso-weekly-goal', 20 * 60 * 60) // 20 hours
+  const [currentSubject, setCurrentSubject] = useLocalStorage('denso-current-subject', '1')
 
-  const addSession = (duration, subjectId = currentSubject, energyLevel = null, flowLevel = null) => {
+  const addSession = (duration, subjectId = currentSubject) => {
     const newSession = {
       id: Date.now().toString(),
       date: getDateKey(),
       timestamp: Date.now(),
       duration, // in seconds
       subjectId,
-      energyLevel, // 'low', 'normal', 'high' or null
-      flowLevel, // 1 (difficult), 2 (normal), 3 (flow) or null
     }
     setSessions((prev) => [...prev, newSession])
   }
@@ -228,72 +226,6 @@ export function useStats() {
       subjectTime[s.subjectId] = (subjectTime[s.subjectId] || 0) + s.duration
     })
 
-    // Energy insights - analyze sessions with energy data
-    const sessionsWithEnergy = sessions.filter((s) => s.energyLevel && s.flowLevel)
-
-    // Average flow by energy level
-    const flowByEnergy = { low: [], normal: [], high: [] }
-    sessionsWithEnergy.forEach((s) => {
-      if (flowByEnergy[s.energyLevel]) {
-        flowByEnergy[s.energyLevel].push(s.flowLevel)
-      }
-    })
-
-    const avgFlowByEnergy = {}
-    Object.entries(flowByEnergy).forEach(([energy, flows]) => {
-      if (flows.length > 0) {
-        avgFlowByEnergy[energy] = flows.reduce((a, b) => a + b, 0) / flows.length
-      }
-    })
-
-    // Best hour analysis (when flow is highest)
-    const flowByHour = {}
-    sessionsWithEnergy.forEach((s) => {
-      const hour = new Date(s.timestamp).getHours()
-      if (!flowByHour[hour]) flowByHour[hour] = []
-      flowByHour[hour].push(s.flowLevel)
-    })
-
-    let bestHour = null
-    let bestHourAvg = 0
-    Object.entries(flowByHour).forEach(([hour, flows]) => {
-      if (flows.length >= 2) { // Need at least 2 sessions to be significant
-        const avg = flows.reduce((a, b) => a + b, 0) / flows.length
-        if (avg > bestHourAvg) {
-          bestHourAvg = avg
-          bestHour = parseInt(hour)
-        }
-      }
-    })
-
-    // Best day analysis
-    const flowByDay = {}
-    sessionsWithEnergy.forEach((s) => {
-      const day = new Date(s.timestamp).getDay()
-      if (!flowByDay[day]) flowByDay[day] = []
-      flowByDay[day].push(s.flowLevel)
-    })
-
-    let bestDay = null
-    let bestDayAvg = 0
-    Object.entries(flowByDay).forEach(([day, flows]) => {
-      if (flows.length >= 2) {
-        const avg = flows.reduce((a, b) => a + b, 0) / flows.length
-        if (avg > bestDayAvg) {
-          bestDayAvg = avg
-          bestDay = parseInt(day)
-        }
-      }
-    })
-
-    // Energy distribution this week
-    const energyDistribution = { low: 0, normal: 0, high: 0 }
-    weekSessions.forEach((s) => {
-      if (s.energyLevel && energyDistribution[s.energyLevel] !== undefined) {
-        energyDistribution[s.energyLevel]++
-      }
-    })
-
     return {
       todayTotal,
       weekTotal,
@@ -301,16 +233,6 @@ export function useStats() {
       weeklyProgress: weekTotal / weeklyGoal,
       subjectTime,
       recentSessions: sessions.slice(-10).reverse(),
-      // Energy insights
-      energyInsights: {
-        avgFlowByEnergy,
-        bestHour,
-        bestHourAvg,
-        bestDay,
-        bestDayAvg,
-        energyDistribution,
-        totalSessionsWithData: sessionsWithEnergy.length,
-      },
     }
   }, [sessions, weeklyGoal])
 

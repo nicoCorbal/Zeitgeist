@@ -1,16 +1,16 @@
 /**
- * Data export/import utilities for Zeitgeist
+ * Data export/import utilities for Denso
  * Allows users to backup and restore their data
  */
 
 // Keys to export from localStorage
 const EXPORT_KEYS = [
-  'zeitgeist-sessions',
-  'zeitgeist-subjects',
-  'zeitgeist-weekly-goal',
-  'zeitgeist-sound',
-  'zeitgeist-sound-type',
-  'zeitgeist-theme',
+  'denso-sessions',
+  'denso-subjects',
+  'denso-weekly-goal',
+  'denso-sound',
+  'denso-sound-type',
+  'denso-theme',
 ]
 
 /**
@@ -44,7 +44,7 @@ export function exportData() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `zeitgeist-backup-${new Date().toISOString().split('T')[0]}.json`
+    a.download = `denso-backup-${new Date().toISOString().split('T')[0]}.json`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -86,9 +86,9 @@ export async function importData(file) {
         localStorage.setItem(key, stringValue)
 
         // Count items
-        if (key === 'zeitgeist-sessions' && Array.isArray(value)) {
+        if (key === 'denso-sessions' && Array.isArray(value)) {
           stats.sessions = value.length
-        } else if (key === 'zeitgeist-subjects' && Array.isArray(value)) {
+        } else if (key === 'denso-subjects' && Array.isArray(value)) {
           stats.subjects = value.length
         } else {
           stats.settings++
@@ -109,8 +109,8 @@ export async function importData(file) {
  */
 export function getDataStats() {
   try {
-    const sessions = JSON.parse(localStorage.getItem('zeitgeist-sessions') || '[]')
-    const subjects = JSON.parse(localStorage.getItem('zeitgeist-subjects') || '[]')
+    const sessions = JSON.parse(localStorage.getItem('denso-sessions') || '[]')
+    const subjects = JSON.parse(localStorage.getItem('denso-subjects') || '[]')
 
     // Calculate total time
     const totalSeconds = sessions.reduce((acc, session) => acc + (session.duration || 0), 0)

@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component {
 
   handleClearAndReload = () => {
     // Clear potentially corrupted localStorage data
-    const keysToPreserve = ['zeitgeist-theme'] // Keep theme preference
+    const keysToPreserve = ['denso-theme'] // Keep theme preference
     const preserved = {}
 
     keysToPreserve.forEach(key => {
@@ -30,9 +30,9 @@ export class ErrorBoundary extends Component {
       if (value) preserved[key] = value
     })
 
-    // Clear all zeitgeist keys
+    // Clear all denso keys
     Object.keys(localStorage)
-      .filter(key => key.startsWith('zeitgeist-'))
+      .filter(key => key.startsWith('denso-'))
       .forEach(key => localStorage.removeItem(key))
 
     // Restore preserved

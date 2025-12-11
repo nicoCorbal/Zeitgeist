@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Zeitgeist is a premium study timer PWA built with React 19 and Vite. It supports Pomodoro technique and free timer modes, with subject-based task tracking, 8 themes, haptic feedback, achievements system, and offline support.
+Denso is a premium study timer PWA built with React 19 and Vite. It supports Pomodoro technique and free timer modes, with subject-based task tracking, 8 themes, haptic feedback, achievements system, and offline support.
 
 ## Commands
 
@@ -18,11 +18,11 @@ Zeitgeist is a premium study timer PWA built with React 19 and Vite. It supports
 ### State Management
 
 All persistent state uses localStorage via the `useLocalStorage` hook. Key storage keys:
-- `zeitgeist-sessions` - Array of completed study sessions
-- `zeitgeist-subjects` - Array of subjects with their todos, durations, and settings
-- `zeitgeist-theme` - Current theme ID
-- `zeitgeist-weekly-goal` - Weekly study goal in seconds
-- `zeitgeist-sound` / `zeitgeist-sound-type` - Sound preferences
+- `denso-sessions` - Array of completed study sessions
+- `denso-subjects` - Array of subjects with their todos, durations, and settings
+- `denso-theme` - Current theme ID
+- `denso-weekly-goal` - Weekly study goal in seconds
+- `denso-sound` / `denso-sound-type` - Sound preferences
 
 ### Core Hooks (src/hooks/)
 

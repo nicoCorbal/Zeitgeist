@@ -6,7 +6,7 @@ import { useLocalStorage } from './useLocalStorage'
  */
 export function useOnboarding() {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useLocalStorage(
-    'zeitgeist-onboarding-complete',
+    'denso-onboarding-complete',
     false
   )
 

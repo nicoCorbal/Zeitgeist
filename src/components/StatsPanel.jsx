@@ -6,7 +6,6 @@ import { useFocusTrap } from '../hooks/useFocusTrap'
 import { DURATIONS, EASINGS } from '../utils/animations'
 import { ActivityHeatmap } from './ActivityHeatmap'
 import { AchievementsPanel } from './AchievementsPanel'
-import { EnergyInsights } from './EnergyInsights'
 import { getAchievementProgress } from '../data/achievements'
 
 const containerVariants = {
@@ -271,11 +270,6 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                   <div className="mt-3">
                     <ActivityHeatmap sessions={sessions} />
                   </div>
-                </motion.section>
-
-                {/* Energy Insights */}
-                <motion.section variants={itemVariants}>
-                  <EnergyInsights insights={stats.energyInsights} />
                 </motion.section>
 
                 {/* Recent Sessions */}
