@@ -1,9 +1,7 @@
 import { useState, useEffect, useId, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Target, Volume2, VolumeX, Clock, Palette, Sparkles, Download, Upload, Database, Focus } from 'lucide-react'
-import { ColorPicker } from './ColorPicker'
+import { X, Target, Volume2, VolumeX, Clock, Sparkles, Download, Upload, Database, Focus } from 'lucide-react'
 import { EmojiPicker } from './EmojiPicker'
-import { IconPicker } from './IconPicker'
 import { ThemePicker } from './ThemePicker'
 import { SoundPicker } from './SoundPicker'
 import { useFocusTrap } from '../hooks/useFocusTrap'
@@ -262,7 +260,7 @@ export function SettingsPanel({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-[var(--bg)] shadow-2xl"
+            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-[var(--bg-solid)] shadow-2xl"
             style={{
               paddingTop: 'var(--safe-area-top)',
               paddingRight: 'var(--safe-area-right)',
@@ -450,39 +448,15 @@ export function SettingsPanel({
                 {/* Personalización de asignatura */}
                 <motion.section variants={itemVariants} aria-labelledby="customize-section">
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                    <Palette size={12} aria-hidden="true" />
                     <span id="customize-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                      Personalizar · {currentSubject?.name || 'General'}
+                      Emoji · {currentSubject?.name || 'General'}
                     </span>
                   </div>
-                  <div className="mt-4 space-y-4">
-                    <div>
-                      <span className="text-[12px] text-[var(--text-tertiary)]">Emoji</span>
-                      <div className="mt-2">
-                        <EmojiPicker
-                          value={currentSubject?.emoji}
-                          onChange={(emoji) => onSubjectUpdate({ emoji })}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-[12px] text-[var(--text-tertiary)]">Color</span>
-                      <div className="mt-2">
-                        <ColorPicker
-                          value={currentSubject?.color}
-                          onChange={(color) => onSubjectUpdate({ color })}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-[12px] text-[var(--text-tertiary)]">Icono</span>
-                      <div className="mt-2">
-                        <IconPicker
-                          value={currentSubject?.icon}
-                          onChange={(icon) => onSubjectUpdate({ icon })}
-                        />
-                      </div>
-                    </div>
+                  <div className="mt-4">
+                    <EmojiPicker
+                      value={currentSubject?.emoji}
+                      onChange={(emoji) => onSubjectUpdate({ emoji })}
+                    />
                   </div>
                 </motion.section>
 

@@ -53,7 +53,7 @@ export function AchievementToast({ achievement, isVisible, onComplete }) {
           aria-live="polite"
         >
           <motion.div
-            className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 py-3 shadow-lg"
+            className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-solid)] px-4 py-3 shadow-lg backdrop-blur-xl"
             initial={{ boxShadow: '0 0 0 0 rgba(var(--text-rgb), 0.3)' }}
             animate={{
               boxShadow: [

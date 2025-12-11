@@ -18,6 +18,26 @@ export function useTheme() {
     root.style.setProperty('--border', theme.colors.border)
     root.style.setProperty('--border-light', theme.colors.borderLight)
 
+    // Color sólido para modales/dropdowns (siempre opaco)
+    root.style.setProperty('--bg-solid', theme.colors.bg)
+    // Color elevado para dropdowns (más claro/visible)
+    root.style.setProperty('--bg-elevated', theme.colors.bgSecondary)
+
+    // Fondo especial (gradiente, etc.)
+    if (theme.colors.bgSpecial) {
+      document.body.style.background = theme.colors.bgSpecial
+      document.body.style.backgroundAttachment = 'fixed'
+      root.style.setProperty('--bg-app', 'transparent')
+    } else {
+      document.body.style.background = theme.colors.bg
+      document.body.style.backgroundAttachment = ''
+      root.style.setProperty('--bg-app', theme.colors.bg)
+    }
+
+    // Logo filter - invertir en temas oscuros
+    const darkThemes = ['dark', 'nord', 'ember', 'ocean']
+    root.style.setProperty('--logo-filter', darkThemes.includes(themeId) ? 'invert(1)' : 'none')
+
     // Para compatibilidad con código existente
     root.setAttribute('data-theme', themeId)
   }, [themeId])
@@ -30,12 +50,12 @@ export function useTheme() {
 
   // Toggle rápido light/dark
   const toggle = () => {
-    const darkThemes = ['dark', 'midnight']
+    const darkThemes = ['dark', 'nord', 'ember', 'ocean']
     const isDark = darkThemes.includes(themeId)
     setThemeId(isDark ? 'light' : 'dark')
   }
 
-  const isDark = ['dark', 'midnight'].includes(themeId)
+  const isDark = ['dark', 'nord', 'ember', 'ocean'].includes(themeId)
 
   return { theme: themeId, setTheme, toggle, isDark }
 }

@@ -61,14 +61,14 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            initial={{ opacity: 0, x: '-100%' }}
+            initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '-100%' }}
+            exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed left-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-[var(--bg)] shadow-2xl"
+            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-[var(--bg-solid)] shadow-2xl"
             style={{
               paddingTop: 'var(--safe-area-top)',
-              paddingLeft: 'var(--safe-area-left)',
+              paddingRight: 'var(--safe-area-right)',
             }}
           >
             {/* Header */}

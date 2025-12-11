@@ -1,106 +1,123 @@
 export const THEMES = {
+  // 1. Blanco puro, minimalista (default light)
   light: {
     id: 'light',
-    name: 'Default',
+    name: 'Light',
     colors: {
-      bg: '#f5f5f5',
-      bgSecondary: '#ebebeb',
-      text: '#141414',
-      textSecondary: '#666666',
-      textTertiary: '#737373',
-      border: '#e0e0e0',
-      borderLight: '#ebebeb',
+      bg: '#ffffff',
+      bgSecondary: '#f5f5f5',
+      text: '#171717',
+      textSecondary: '#525252',
+      textTertiary: '#a3a3a3',
+      border: '#e5e5e5',
+      borderLight: '#f0f0f0',
     }
   },
+
+  // 2. Negro OLED puro (default dark)
   dark: {
     id: 'dark',
     name: 'Dark',
     colors: {
-      bg: '#0a0a0a',
-      bgSecondary: '#141414',
+      bg: '#000000',
+      bgSecondary: '#0a0a0a',
       text: '#fafafa',
-      textSecondary: '#a0a0a0',
-      textTertiary: '#666666',
-      border: '#262626',
-      borderLight: '#1a1a1a',
+      textSecondary: '#a1a1a1',
+      textTertiary: '#525252',
+      border: '#1a1a1a',
+      borderLight: '#0f0f0f',
     }
   },
-  forest: {
-    id: 'forest',
-    name: 'Forest',
+
+  // 3. Sepia cálido, como un libro
+  sepia: {
+    id: 'sepia',
+    name: 'Sepia',
     colors: {
-      bg: '#f0f4f0',
-      bgSecondary: '#e2ebe2',
-      text: '#1a2e1a',
-      textSecondary: '#4a6b4a',
-      textTertiary: '#6b8b6b',
-      border: '#c8d9c8',
-      borderLight: '#dae8da',
+      bg: '#f5f0e6',
+      bgSecondary: '#ebe4d6',
+      text: '#3d3227',
+      textSecondary: '#6b5d4d',
+      textTertiary: '#998a76',
+      border: '#ddd4c4',
+      borderLight: '#e8e0d2',
     }
   },
+
+  // 4. Nord - Azul ártico frío
+  nord: {
+    id: 'nord',
+    name: 'Nord',
+    colors: {
+      bg: '#2e3440',
+      bgSecondary: '#3b4252',
+      text: '#eceff4',
+      textSecondary: '#d8dee9',
+      textTertiary: '#7b88a1',
+      border: '#434c5e',
+      borderLight: '#3b4252',
+    }
+  },
+
+  // 5. Verde natural relajante
+  sage: {
+    id: 'sage',
+    name: 'Sage',
+    colors: {
+      bg: '#f4f7f4',
+      bgSecondary: '#e8ede8',
+      text: '#2d3a2d',
+      textSecondary: '#4a5f4a',
+      textTertiary: '#7a937a',
+      border: '#d4ddd4',
+      borderLight: '#e0e8e0',
+    }
+  },
+
+  // 6. Cálido y energético
+  ember: {
+    id: 'ember',
+    name: 'Ember',
+    colors: {
+      bg: '#1a1416',
+      bgSecondary: '#241c1e',
+      text: '#f5ebe8',
+      textSecondary: '#d4a59a',
+      textTertiary: '#8c6b62',
+      border: '#3a2c2e',
+      borderLight: '#2a2022',
+    }
+  },
+
+  // 7. Azul profundo con gradiente sutil
   ocean: {
     id: 'ocean',
     name: 'Ocean',
     colors: {
-      bg: '#f0f5f8',
-      bgSecondary: '#e1ecf2',
-      text: '#1a2a3a',
-      textSecondary: '#4a6a8a',
-      textTertiary: '#6b8bab',
-      border: '#c8d8e8',
-      borderLight: '#dae8f2',
+      bg: '#0c1220',
+      bgSecondary: '#121a2a',
+      text: '#e8eef4',
+      textSecondary: '#8a9bb4',
+      textTertiary: '#5a6a80',
+      border: '#1a2535',
+      borderLight: '#151d2a',
+      bgSpecial: 'radial-gradient(ellipse at 50% 100%, #0a1828 0%, #0c1220 60%)',
     }
   },
-  sunset: {
-    id: 'sunset',
-    name: 'Sunset',
+
+  // 8. Gradiente suave claro (especial)
+  cloud: {
+    id: 'cloud',
+    name: 'Cloud',
     colors: {
-      bg: '#fdf6f0',
-      bgSecondary: '#f8ebe0',
-      text: '#3a2a1a',
-      textSecondary: '#8a6a4a',
-      textTertiary: '#ab8b6b',
-      border: '#e8d8c8',
-      borderLight: '#f2e8da',
-    }
-  },
-  lavender: {
-    id: 'lavender',
-    name: 'Lavender',
-    colors: {
-      bg: '#f6f0f8',
-      bgSecondary: '#ebe0f2',
-      text: '#2a1a3a',
-      textSecondary: '#6a4a8a',
-      textTertiary: '#8b6bab',
-      border: '#d8c8e8',
-      borderLight: '#e8daf2',
-    }
-  },
-  midnight: {
-    id: 'midnight',
-    name: 'Midnight',
-    colors: {
-      bg: '#0f0f1a',
-      bgSecondary: '#1a1a2e',
-      text: '#e8e8f0',
-      textSecondary: '#9090b0',
-      textTertiary: '#606080',
-      border: '#2a2a4a',
-      borderLight: '#202038',
-    }
-  },
-  paper: {
-    id: 'paper',
-    name: 'Paper',
-    colors: {
-      bg: '#faf8f5',
-      bgSecondary: '#f0ede8',
-      text: '#2a2520',
-      textSecondary: '#6a6560',
-      textTertiary: '#8a8580',
-      border: '#e0dcd5',
-      borderLight: '#ebe8e2',
+      bg: '#f0f2f5',
+      bgSecondary: '#e4e7ec',
+      text: '#1f2937',
+      textSecondary: '#4b5563',
+      textTertiary: '#9ca3af',
+      border: '#d1d5db',
+      borderLight: '#e5e7eb',
+      bgSpecial: 'linear-gradient(135deg, #f0f2f5 0%, #e8eaf0 40%, #f2f0f5 100%)',
     }
   },
 }

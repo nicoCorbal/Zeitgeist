@@ -30,7 +30,7 @@ export function Toast({ message, type = 'success', isVisible, onDismiss }) {
           className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2"
           style={{ paddingBottom: 'max(0px, var(--safe-area-bottom))' }}
         >
-          <div className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg)] px-4 py-2 shadow-lg">
+          <div className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-solid)] px-4 py-2 shadow-lg backdrop-blur-xl">
             <Icon
               size={14}
               className="flex-shrink-0 text-[var(--text)]"

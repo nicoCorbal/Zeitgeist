@@ -129,7 +129,7 @@ export function AchievementsPanel({ isOpen, onClose, achievements = [] }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ duration: DURATIONS.normal, ease: EASINGS.smooth }}
-            className="fixed bottom-0 right-0 top-0 z-50 w-full max-w-md overflow-y-auto bg-[var(--bg)] p-6 shadow-xl"
+            className="fixed bottom-0 right-0 top-0 z-50 w-full max-w-md overflow-y-auto bg-[var(--bg-solid)] p-6 shadow-xl"
             style={{
               paddingTop: 'max(24px, var(--safe-area-top))',
               paddingBottom: 'max(24px, var(--safe-area-bottom))',

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sun, Moon, ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ChevronRight, ArrowLeft, BarChart2, Trash2 } from 'lucide-react'
+import { ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ArrowLeft, BarChart2, Trash2, CheckSquare, Pencil } from 'lucide-react'
 import { useStats } from './hooks/useStats'
 import { useTimer } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
@@ -16,6 +16,7 @@ import { OfflineBanner } from './components/OfflineBanner'
 import { Onboarding } from './components/Onboarding'
 import { AchievementToast } from './components/AchievementToast'
 import { formatTime, formatDuration } from './utils/time'
+import { EMOJIS } from './data/emojis'
 import './index.css'
 
 // Lazy load heavy panels
@@ -72,7 +73,11 @@ function AnimatedTime({ time }) {
 function App() {
   const [showSubjects, setShowSubjects] = useState(false)
   const [newSubject, setNewSubject] = useState('')
+  const [newSubjectEmoji, setNewSubjectEmoji] = useState(null)
   const [isAddingSubject, setIsAddingSubject] = useState(false)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [editingSubject, setEditingSubject] = useState(null)
+  const [editingName, setEditingName] = useState('')
   const [showStats, setShowStats] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [viewingTodosFor, setViewingTodosFor] = useState(null) // ID de asignatura para ver todos
@@ -84,7 +89,7 @@ function App() {
   const [dailyGoal, setDailyGoal] = useLocalStorage('denso-daily-goal', 2 * 60 * 60) // 2 hours default
 
 
-  const { theme, setTheme, toggle: toggleTheme, isDark } = useTheme()
+  const { theme, setTheme } = useTheme()
   const { notify, requestPermission } = useNotification()
   const { toast, show: showToast } = useToast()
   const haptics = useHaptics()
@@ -166,6 +171,7 @@ function App() {
       if (e.target.tagName === 'INPUT') return
       if (e.code === 'Space') {
         e.preventDefault()
+        document.activeElement?.blur()
         handleToggle()
       }
       if (e.key === 'r' || e.key === 'R') timer.reset()
@@ -193,9 +199,11 @@ function App() {
   const handleAddSubject = () => {
     if (newSubject.trim()) {
       haptics.light()
-      addSubject(newSubject.trim())
+      addSubject(newSubject.trim(), newSubjectEmoji)
       setNewSubject('')
+      setNewSubjectEmoji(null)
       setIsAddingSubject(false)
+      setShowEmojiPicker(false)
     }
   }
 
@@ -223,7 +231,7 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--bg)] text-[var(--text)] transition-colors duration-500">
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-[var(--bg-app)] text-[var(--text)] transition-colors duration-500">
       {/* Skip link for keyboard users */}
       <a href="#main-timer" className="skip-link">
         Saltar al temporizador
@@ -231,8 +239,8 @@ function App() {
 
       {/* Header */}
       <motion.header
-        className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5"
-        style={{ paddingTop: 'max(16px, var(--safe-area-top))' }}
+        className="flex flex-shrink-0 items-center justify-between px-4 py-3 sm:px-6 sm:py-5"
+        style={{ paddingTop: 'max(12px, var(--safe-area-top))' }}
         animate={{
           opacity: isDeepFocus ? 0 : 1,
           pointerEvents: isDeepFocus ? 'none' : 'auto'
@@ -240,42 +248,40 @@ function App() {
         transition={{ duration: 0.4 }}
       >
         <img src="/logo.svg" alt="Denso" className="h-8" style={{ filter: 'var(--logo-filter)' }} />
-        <div className="flex items-center gap-1">
+        <motion.div
+          className="flex items-center gap-1"
+          animate={{ opacity: timer.isRunning ? 0 : 1 }}
+          transition={{ duration: 0.2 }}
+          style={{ pointerEvents: timer.isRunning ? 'none' : 'auto' }}
+        >
           <button
-            onClick={() => setShowStats(true)}
-            className="p-2 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
+            onClick={(e) => { e.currentTarget.blur(); setShowStats(true) }}
+            className="p-2 text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
             aria-label="Ver estadísticas"
           >
-            <BarChart2 size={16} strokeWidth={1.5} aria-hidden="true" />
+            <BarChart2 size={18} strokeWidth={1.5} aria-hidden="true" />
           </button>
           <button
-            onClick={() => setShowSettings(true)}
-            className="p-2 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
+            onClick={(e) => { e.currentTarget.blur(); setShowSettings(true) }}
+            className="p-2 text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
             aria-label="Abrir ajustes"
           >
-            <Settings size={16} strokeWidth={1.5} aria-hidden="true" />
+            <Settings size={18} strokeWidth={1.5} aria-hidden="true" />
           </button>
-          <button
-            onClick={toggleTheme}
-            className="p-2 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
-            aria-label={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
-          >
-            {isDark ? <Sun size={16} strokeWidth={1.5} aria-hidden="true" /> : <Moon size={16} strokeWidth={1.5} aria-hidden="true" />}
-          </button>
-        </div>
+        </motion.div>
       </motion.header>
 
       {/* Main */}
-      <main className="flex flex-1 flex-col items-center justify-center">
+      <main className="flex min-h-0 flex-1 flex-col items-center justify-center">
         <div className="flex flex-col items-center">
 
           {/* Subject selector */}
           <motion.div
-            className="relative mb-6"
+            className="relative mb-4 sm:mb-6"
             animate={{
               opacity: (isFocusMode || isBreakMode) ? 0 : 1,
               height: (isFocusMode || isBreakMode) ? 0 : 'auto',
-              marginBottom: (isFocusMode || isBreakMode) ? 0 : 24
+              marginBottom: (isFocusMode || isBreakMode) ? 0 : undefined
             }}
             transition={{
               opacity: { duration: 0.15, delay: (isFocusMode || isBreakMode) ? 0 : 0.2 },
@@ -300,7 +306,7 @@ function App() {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
-                    className="absolute left-1/2 top-full z-20 mt-2 w-64 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg)] py-1 shadow-lg"
+                    className="absolute left-1/2 top-full z-20 mt-2 w-72 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] shadow-lg"
                   >
                     {viewingTodosFor ? (
                       // Vista de todos de una asignatura
@@ -316,32 +322,32 @@ function App() {
                             {subjects.find(s => s.id === viewingTodosFor)?.emoji} {subjects.find(s => s.id === viewingTodosFor)?.name}
                           </span>
                         </div>
-                        <div className="max-h-64 overflow-y-auto py-1">
+                        <div className="max-h-64 overflow-y-auto p-1">
                           {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(t => !t.completed).map((todo) => (
                             <button
                               key={todo.id}
                               onClick={() => toggleTodo(viewingTodosFor, todo.id)}
-                              className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-[var(--bg-secondary)]"
+                              className="flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-[var(--bg-secondary)]"
                             >
                               <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border border-[var(--border)]" />
                               <span className="text-[13px] text-[var(--text)]">{todo.text}</span>
                             </button>
                           ))}
                           {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(t => t.completed).length > 0 && (
-                            <div className="px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
+                            <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
                               Completadas
                             </div>
                           )}
                           {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(t => t.completed).map((todo) => (
                             <div
                               key={todo.id}
-                              className="group flex w-full items-center gap-3 px-3 py-2 transition-colors hover:bg-[var(--bg-secondary)]"
+                              className="group flex w-full items-center gap-3 rounded-md px-2 py-1.5 transition-colors hover:bg-[var(--bg-secondary)]"
                             >
                               <button
                                 onClick={() => toggleTodo(viewingTodosFor, todo.id)}
                                 className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border border-[var(--text)] bg-[var(--text)]"
                               >
-                                <Check size={10} className="text-[var(--bg)]" />
+                                <Check size={10} className="text-[var(--bg-solid)]" />
                               </button>
                               <span className="flex-1 text-[13px] text-[var(--text-tertiary)] line-through">{todo.text}</span>
                               <button
@@ -353,96 +359,176 @@ function App() {
                             </div>
                           ))}
                           {(!subjects.find(s => s.id === viewingTodosFor)?.todos || subjects.find(s => s.id === viewingTodosFor)?.todos.length === 0) && (
-                            <p className="px-3 py-4 text-center text-[12px] text-[var(--text-tertiary)]">Sin tareas</p>
+                            <p className="px-2 py-4 text-center text-[12px] text-[var(--text-tertiary)]">Sin tareas</p>
                           )}
                         </div>
-                        <div className="border-t border-[var(--border)] px-3 py-2">
-                          <form onSubmit={(e) => {
-                            e.preventDefault()
-                            if (newTodoText.trim()) {
-                              addTodo(viewingTodosFor, newTodoText.trim())
-                              setNewTodoText('')
-                            }
-                          }}>
+                        <div className="border-t border-[var(--border)] p-2">
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault()
+                              if (newTodoText.trim()) {
+                                addTodo(viewingTodosFor, newTodoText.trim())
+                                setNewTodoText('')
+                              }
+                            }}
+                            className="flex items-center gap-2"
+                          >
                             <input
                               type="text"
                               value={newTodoText}
                               onChange={(e) => setNewTodoText(e.target.value)}
+                              onKeyDown={(e) => e.stopPropagation()}
                               placeholder="Nueva tarea..."
-                              className="w-full border-none bg-transparent text-[13px] outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 placeholder:text-[var(--text-tertiary)]"
+                              className="flex-1 rounded-md border border-[var(--border)] bg-transparent px-2.5 py-1.5 text-[13px] text-[var(--text)] outline-none focus:border-[var(--text-tertiary)] placeholder:text-[var(--text-tertiary)]"
                             />
+                            <button
+                              type="submit"
+                              disabled={!newTodoText.trim()}
+                              className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--text)] text-[var(--bg)] disabled:opacity-30"
+                            >
+                              <Plus size={16} />
+                            </button>
                           </form>
                         </div>
                       </>
                     ) : (
                       // Lista de asignaturas
-                      <>
+                      <div className="p-1">
                         {subjects.map((s) => (
                           <div
                             key={s.id}
-                            className={`group flex items-center px-3 py-2 transition-colors hover:bg-[var(--bg-secondary)] ${
+                            className={`group flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-[var(--bg-secondary)] ${
                               s.id === currentSubject ? 'text-[var(--text)]' : 'text-[var(--text-secondary)]'
                             }`}
                           >
-                            <button
-                              onClick={() => { setCurrentSubject(s.id); setShowSubjects(false) }}
-                              className="flex flex-1 items-center gap-2 text-left text-[13px]"
-                            >
-                              {s.emoji && <span>{s.emoji}</span>}
-                              {s.name}
-                            </button>
-                            {subjects.length > 1 && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setSubjectToDelete(s)
+                            {editingSubject === s.id ? (
+                              <form
+                                onSubmit={(e) => {
+                                  e.preventDefault()
+                                  if (editingName.trim()) {
+                                    updateSubject(s.id, { name: editingName.trim() })
+                                    setEditingSubject(null)
+                                    setEditingName('')
+                                  }
                                 }}
-                                className="p-1 text-[var(--text-tertiary)] opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100"
+                                className="flex flex-1 items-center gap-2"
                               >
-                                <Trash2 size={14} />
-                              </button>
+                                {s.emoji && <span>{s.emoji}</span>}
+                                <input
+                                  type="text"
+                                  value={editingName}
+                                  onChange={(e) => setEditingName(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    e.stopPropagation()
+                                    if (e.key === 'Escape') {
+                                      setEditingSubject(null)
+                                      setEditingName('')
+                                    }
+                                  }}
+                                  className="flex-1 border-none bg-transparent text-[13px] text-[var(--text)] outline-none"
+                                  autoFocus
+                                />
+                                <button type="submit" className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text)]">
+                                  <Check size={14} />
+                                </button>
+                              </form>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => { setCurrentSubject(s.id); setShowSubjects(false) }}
+                                  className="flex flex-1 items-center gap-2 text-left text-[13px]"
+                                >
+                                  {s.emoji && <span>{s.emoji}</span>}
+                                  {s.name}
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setEditingSubject(s.id)
+                                    setEditingName(s.name)
+                                  }}
+                                  className="p-1 text-[var(--text-tertiary)] opacity-0 transition-opacity hover:text-[var(--text)] group-hover:opacity-100"
+                                  title="Editar nombre"
+                                >
+                                  <Pencil size={14} />
+                                </button>
+                                {subjects.length > 1 && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setSubjectToDelete(s)
+                                    }}
+                                    className="p-1 text-[var(--text-tertiary)] opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                )}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setViewingTodosFor(s.id)
+                                  }}
+                                  className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text)]"
+                                  title="Ver tareas"
+                                >
+                                  <CheckSquare size={14} />
+                                </button>
+                              </>
                             )}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setViewingTodosFor(s.id)
-                              }}
-                              className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text)]"
-                            >
-                              <ChevronRight size={14} />
-                            </button>
                           </div>
                         ))}
-                        <div className="border-t border-[var(--border)] mt-1 pt-1">
-                          {isAddingSubject ? (
-                            <div className="flex items-center gap-2 px-3 py-2">
+                        <div className="border-t border-[var(--border)] mx-1 my-1" />
+                        {isAddingSubject ? (
+                          <div className="px-2 py-1.5">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border)] text-sm hover:bg-[var(--bg-secondary)]"
+                              >
+                                {newSubjectEmoji || '😀'}
+                              </button>
                               <input
                                 type="text"
                                 value={newSubject}
                                 onChange={(e) => setNewSubject(e.target.value)}
                                 onKeyDown={(e) => {
+                                  e.stopPropagation()
                                   if (e.key === 'Enter') handleAddSubject()
-                                  if (e.key === 'Escape') { setIsAddingSubject(false); setNewSubject('') }
+                                  if (e.key === 'Escape') { setIsAddingSubject(false); setNewSubject(''); setNewSubjectEmoji(null); setShowEmojiPicker(false) }
                                 }}
                                 placeholder="Nombre..."
-                                className="flex-1 border-none bg-transparent text-[13px] outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 placeholder:text-[var(--text-tertiary)]"
+                                className="flex-1 border-none bg-transparent text-[13px] text-[var(--text)] outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 placeholder:text-[var(--text-tertiary)]"
                                 autoFocus
                               />
-                              <button onClick={() => { setIsAddingSubject(false); setNewSubject('') }}>
+                              <button onClick={() => { setIsAddingSubject(false); setNewSubject(''); setNewSubjectEmoji(null); setShowEmojiPicker(false) }}>
                                 <X size={14} className="text-[var(--text-tertiary)]" />
                               </button>
                             </div>
-                          ) : (
-                            <button
-                              onClick={() => setIsAddingSubject(true)}
-                              className="flex w-full items-center gap-2 px-3 py-2 text-[13px] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]"
-                            >
-                              <Plus size={14} />
-                              Nueva materia
-                            </button>
-                          )}
-                        </div>
-                      </>
+                            {showEmojiPicker && (
+                              <div className="mt-2 grid grid-cols-8 gap-1 max-h-32 overflow-y-auto">
+                                {EMOJIS.map((emoji) => (
+                                  <button
+                                    key={emoji}
+                                    onClick={() => { setNewSubjectEmoji(emoji); setShowEmojiPicker(false) }}
+                                    className={`flex h-7 w-7 items-center justify-center rounded text-sm hover:bg-[var(--bg-secondary)] ${newSubjectEmoji === emoji ? 'bg-[var(--bg-secondary)]' : ''}`}
+                                  >
+                                    {emoji}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setIsAddingSubject(true)}
+                            className="flex w-full items-center gap-2 rounded-md mx-1 px-2 py-1.5 text-[13px] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]"
+                            style={{ width: 'calc(100% - 8px)' }}
+                          >
+                            <Plus size={14} />
+                            Nueva materia
+                          </button>
+                        )}
+                      </div>
                     )}
                   </motion.div>
                 </>
@@ -471,10 +557,10 @@ function App() {
               className="select-none font-semibold leading-none tracking-[-0.02em] tabular-nums outline-none"
               animate={{
                 fontSize: isFocusMode
-                  ? 'min(200px, 25vw)'
+                  ? 'min(200px, 28vw)'
                   : isBreakMode
-                    ? 'min(100px, 15vw)'
-                    : 'min(140px, 20vw)'
+                    ? 'min(100px, 18vw)'
+                    : 'min(140px, 22vw)'
               }}
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
               aria-label={`${timer.isRunning ? 'Pausar' : 'Iniciar'} temporizador. Tiempo: ${formatTime(timer.displayTime)}`}
@@ -502,11 +588,11 @@ function App() {
 
           {/* Mode toggle */}
           <motion.div
-            className="flex items-center gap-3 text-[13px] text-[var(--text-tertiary)]"
+            className="mt-4 flex items-center gap-3 text-[13px] text-[var(--text-tertiary)] sm:mt-6"
             animate={{
               opacity: (isFocusMode || isBreakMode) ? 0 : 1,
               height: (isFocusMode || isBreakMode) ? 0 : 'auto',
-              marginTop: (isFocusMode || isBreakMode) ? 0 : 24
+              marginTop: (isFocusMode || isBreakMode) ? 0 : undefined
             }}
             transition={{
               opacity: { duration: 0.15, delay: (isFocusMode || isBreakMode) ? 0 : 0.2 },
@@ -531,11 +617,11 @@ function App() {
 
           {/* Controls */}
           <motion.div
-            className="flex items-center gap-4"
+            className="mt-6 flex items-center gap-4 sm:mt-10"
             animate={{
               opacity: (isFocusMode || isBreakMode) ? 0 : 1,
               height: (isFocusMode || isBreakMode) ? 0 : 'auto',
-              marginTop: (isFocusMode || isBreakMode) ? 0 : 40
+              marginTop: (isFocusMode || isBreakMode) ? 0 : undefined
             }}
             transition={{
               opacity: { duration: 0.15, delay: (isFocusMode || isBreakMode) ? 0 : 0.2 },
@@ -580,8 +666,8 @@ function App() {
 
       {/* Footer */}
       <motion.footer
-        className="flex items-center justify-center gap-2 px-4 py-4 text-[11px] tabular-nums text-[var(--text-tertiary)] sm:gap-4 sm:px-6 sm:py-5 sm:text-[12px]"
-        style={{ paddingBottom: 'max(16px, var(--safe-area-bottom))' }}
+        className="flex flex-shrink-0 items-center justify-center gap-2 px-4 py-3 text-[11px] tabular-nums text-[var(--text-tertiary)] sm:gap-4 sm:px-6 sm:py-5 sm:text-[12px]"
+        style={{ paddingBottom: 'max(12px, var(--safe-area-bottom))' }}
         aria-label="Resumen de progreso"
         animate={{
           opacity: isDeepFocus ? 0 : 1,
@@ -696,7 +782,7 @@ function App() {
                     {s.emoji ? (
                       <span className="text-sm">{s.emoji}</span>
                     ) : (
-                      <span className={`h-2 w-2 rounded-full ${s.id === currentSubject ? 'bg-[var(--bg)]' : 'bg-[var(--text-tertiary)]'}`} style={s.id !== currentSubject && s.color ? { backgroundColor: s.color } : {}} />
+                      <span className={`h-2 w-2 rounded-full ${s.id === currentSubject ? 'bg-[var(--bg)]' : 'bg-[var(--text-tertiary)]'}`} />
                     )}
                     <span className="truncate text-[13px] font-medium">{s.name}</span>
                     <span className={`ml-auto text-[11px] tabular-nums ${s.id === currentSubject ? 'opacity-60' : 'opacity-0 group-hover:opacity-40'}`}>
@@ -804,7 +890,7 @@ function App() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed left-1/2 top-1/2 z-50 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-[var(--bg)] p-6 shadow-2xl"
+              className="fixed left-1/2 top-1/2 z-50 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-[var(--bg-solid)] p-6 shadow-2xl"
             >
               <h3 className="text-[15px] font-semibold text-[var(--text)]">
                 ¿Eliminar asignatura?

@@ -22,23 +22,19 @@ const getWeekStart = (date = new Date()) => {
 const migrateSubject = (subject) => ({
   id: subject.id,
   name: subject.name,
-  color: subject.color || '#141414',
-  icon: subject.icon || null,
   emoji: subject.emoji || null,
   workDuration: subject.workDuration || 25 * 60,
   breakDuration: subject.breakDuration || 5 * 60,
   longBreakDuration: subject.longBreakDuration || 15 * 60,
   longBreakInterval: subject.longBreakInterval ?? 4,
   todos: subject.todos || [],
-  tags: subject.tags || [],
 })
 
 export function useStats() {
   const [sessions, setSessions] = useLocalStorage('denso-sessions', [])
   const [rawSubjects, setSubjects] = useLocalStorage('denso-subjects', [
-    { id: '1', name: 'General', color: '#141414', icon: null, emoji: '💻', workDuration: 25 * 60, breakDuration: 5 * 60, todos: [] },
+    { id: '1', name: 'General', emoji: '💻', workDuration: 25 * 60, breakDuration: 5 * 60, todos: [] },
   ])
-  const [tags, setTags] = useLocalStorage('denso-tags', [])
 
   // Migrar subjects existentes para añadir campos faltantes
   const subjects = rawSubjects.map(migrateSubject)
@@ -60,8 +56,6 @@ export function useStats() {
     const newSubject = {
       id: Date.now().toString(),
       name,
-      color: '#141414',
-      icon: null,
       emoji,
       workDuration: 25 * 60,
       breakDuration: 5 * 60,
@@ -124,54 +118,6 @@ export function useStats() {
       prev.map((s) =>
         s.id === subjectId
           ? { ...s, todos: (s.todos || []).filter((t) => t.id !== todoId) }
-          : s
-      )
-    )
-  }
-
-  // Tags CRUD
-  const addTag = (name, color = '#666666') => {
-    const newTag = {
-      id: Date.now().toString(),
-      name,
-      color,
-    }
-    setTags((prev) => [...prev, newTag])
-    return newTag.id
-  }
-
-  const updateTag = (id, updates) => {
-    setTags((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...updates } : t))
-    )
-  }
-
-  const deleteTag = (id) => {
-    setTags((prev) => prev.filter((t) => t.id !== id))
-    // También quitar el tag de todas las asignaturas
-    setSubjects((prev) =>
-      prev.map((s) => ({
-        ...s,
-        tags: (s.tags || []).filter((tagId) => tagId !== id),
-      }))
-    )
-  }
-
-  const addTagToSubject = (subjectId, tagId) => {
-    setSubjects((prev) =>
-      prev.map((s) =>
-        s.id === subjectId && !(s.tags || []).includes(tagId)
-          ? { ...s, tags: [...(s.tags || []), tagId] }
-          : s
-      )
-    )
-  }
-
-  const removeTagFromSubject = (subjectId, tagId) => {
-    setSubjects((prev) =>
-      prev.map((s) =>
-        s.id === subjectId
-          ? { ...s, tags: (s.tags || []).filter((id) => id !== tagId) }
           : s
       )
     )
@@ -242,7 +188,6 @@ export function useStats() {
     currentSubject,
     weeklyGoal,
     stats,
-    tags,
     addSession,
     addSubject,
     updateSubject,
@@ -252,10 +197,5 @@ export function useStats() {
     addTodo,
     toggleTodo,
     deleteTodo,
-    addTag,
-    updateTag,
-    deleteTag,
-    addTagToSubject,
-    removeTagFromSubject,
   }
 }

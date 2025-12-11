@@ -35,6 +35,8 @@
 :root {
   /* Colors - Light theme */
   --bg: #f5f5f5;
+  --bg-app: #f5f5f5;
+  --bg-solid: #f5f5f5;
   --bg-secondary: #ebebeb;
   --text: #141414;
   --text-secondary: #666666;

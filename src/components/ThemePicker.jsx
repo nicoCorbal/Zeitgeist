@@ -18,22 +18,18 @@ export function ThemePicker({ value, onChange }) {
         >
           {/* Preview de colores */}
           <div
-            className="h-8 w-full rounded-md border"
+            className="flex h-8 w-full items-center justify-center rounded-md border"
             style={{
-              backgroundColor: theme.colors.bg,
+              background: theme.colors.bgSpecial || theme.colors.bg,
               borderColor: theme.colors.border,
             }}
           >
-            <div className="flex h-full items-center justify-center gap-1 px-1">
-              <div
-                className="h-2 w-2 rounded-full"
-                style={{ backgroundColor: theme.colors.text }}
-              />
-              <div
-                className="h-1.5 flex-1 rounded"
-                style={{ backgroundColor: theme.colors.textTertiary }}
-              />
-            </div>
+            <span
+              className="text-[11px] font-semibold tabular-nums"
+              style={{ color: theme.colors.text }}
+            >
+              25:00
+            </span>
           </div>
           <span className="text-[10px] font-medium text-[var(--text-secondary)]">
             {theme.name}
