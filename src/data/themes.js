@@ -8,7 +8,7 @@ export const THEMES = {
       bgSecondary: '#f5f5f5',
       text: '#171717',
       textSecondary: '#525252',
-      textTertiary: '#a3a3a3',
+      textTertiary: '#737373',
       border: '#e5e5e5',
       borderLight: '#f0f0f0',
     }
@@ -23,7 +23,7 @@ export const THEMES = {
       bgSecondary: '#0a0a0a',
       text: '#fafafa',
       textSecondary: '#a1a1a1',
-      textTertiary: '#525252',
+      textTertiary: '#8a8a8a',
       border: '#1a1a1a',
       borderLight: '#0f0f0f',
     }
@@ -38,7 +38,7 @@ export const THEMES = {
       bgSecondary: '#ebe4d6',
       text: '#3d3227',
       textSecondary: '#6b5d4d',
-      textTertiary: '#998a76',
+      textTertiary: '#756859',
       border: '#ddd4c4',
       borderLight: '#e8e0d2',
     }
@@ -53,7 +53,7 @@ export const THEMES = {
       bgSecondary: '#3b4252',
       text: '#eceff4',
       textSecondary: '#d8dee9',
-      textTertiary: '#7b88a1',
+      textTertiary: '#9aa5b8',
       border: '#434c5e',
       borderLight: '#3b4252',
     }
@@ -68,7 +68,7 @@ export const THEMES = {
       bgSecondary: '#e8ede8',
       text: '#2d3a2d',
       textSecondary: '#4a5f4a',
-      textTertiary: '#7a937a',
+      textTertiary: '#5c725c',
       border: '#d4ddd4',
       borderLight: '#e0e8e0',
     }
@@ -83,7 +83,7 @@ export const THEMES = {
       bgSecondary: '#241c1e',
       text: '#f5ebe8',
       textSecondary: '#d4a59a',
-      textTertiary: '#8c6b62',
+      textTertiary: '#b08a80',
       border: '#3a2c2e',
       borderLight: '#2a2022',
     }
@@ -98,7 +98,7 @@ export const THEMES = {
       bgSecondary: '#121a2a',
       text: '#e8eef4',
       textSecondary: '#8a9bb4',
-      textTertiary: '#5a6a80',
+      textTertiary: '#8899aa',
       border: '#1a2535',
       borderLight: '#151d2a',
       bgSpecial: 'radial-gradient(ellipse at 50% 100%, #0a1828 0%, #0c1220 60%)',
@@ -114,7 +114,7 @@ export const THEMES = {
       bgSecondary: '#e4e7ec',
       text: '#1f2937',
       textSecondary: '#4b5563',
-      textTertiary: '#9ca3af',
+      textTertiary: '#5f6672',
       border: '#d1d5db',
       borderLight: '#e5e7eb',
       bgSpecial: 'linear-gradient(135deg, #f0f2f5 0%, #e8eaf0 40%, #f2f0f5 100%)',
