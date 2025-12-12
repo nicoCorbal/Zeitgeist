@@ -294,7 +294,7 @@ function TimerApp() {
           >
             <button
               onClick={() => setShowSubjects(!showSubjects)}
-              className="flex items-center gap-1.5 text-[13px] text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
+              className="flex items-center gap-2 text-[15px] font-normal text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
             >
               {current?.emoji && <span>{current.emoji}</span>}
               {current?.name || 'General'}
@@ -309,7 +309,7 @@ function TimerApp() {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
-                    className="absolute left-1/2 top-full z-20 mt-2 w-72 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] shadow-lg"
+                    className="absolute left-1/2 top-full z-20 mt-2 w-80 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] shadow-lg"
                   >
                     {viewingTodosFor ? (
                       // Vista de todos de una asignatura
@@ -589,35 +589,7 @@ function TimerApp() {
 
           </div>
 
-          {/* Mode toggle */}
-          <motion.div
-            className="mt-4 flex items-center gap-3 text-[13px] text-[var(--text-tertiary)] sm:mt-6"
-            animate={{
-              opacity: (isFocusMode || isBreakMode) ? 0 : 1,
-              height: (isFocusMode || isBreakMode) ? 0 : 'auto',
-              marginTop: (isFocusMode || isBreakMode) ? 0 : undefined
-            }}
-            transition={{
-              opacity: { duration: 0.15, delay: (isFocusMode || isBreakMode) ? 0 : 0.2 },
-              height: { duration: 0.4, ease: [0.4, 0, 0.2, 1], delay: (isFocusMode || isBreakMode) ? 0.08 : 0 },
-              marginTop: { duration: 0.4, ease: [0.4, 0, 0.2, 1], delay: (isFocusMode || isBreakMode) ? 0.08 : 0 }
-            }}
-          >
-            <button
-              onClick={() => timer.switchMode('pomodoro')}
-              className={`transition-colors ${timer.mode === 'pomodoro' ? 'text-[var(--text-secondary)]' : 'hover:text-[var(--text-secondary)]'}`}
-            >
-              Pomodoro
-            </button>
-            <span>/</span>
-            <button
-              onClick={() => timer.switchMode('free')}
-              className={`transition-colors ${timer.mode === 'free' ? 'text-[var(--text-secondary)]' : 'hover:text-[var(--text-secondary)]'}`}
-            >
-              Libre
-            </button>
-          </motion.div>
-
+          
           {/* Controls */}
           <motion.div
             className="mt-6 flex items-center gap-4 sm:mt-10"
