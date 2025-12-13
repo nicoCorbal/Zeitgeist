@@ -18,6 +18,28 @@ const getWeekStart = (date = new Date()) => {
   return getDateKey(d)
 }
 
+// Expand compact session to full format (backwards compatible)
+const expandSession = (s) => {
+  // Already expanded format
+  if (s.id && s.date && s.timestamp) return s
+  // Compact format
+  const timestamp = s.t || s.timestamp
+  return {
+    id: String(timestamp),
+    date: getDateKey(new Date(timestamp)),
+    timestamp,
+    duration: s.d ?? s.duration,
+    subjectId: s.s || s.subjectId,
+  }
+}
+
+// Compact session for storage
+const compactSession = (s) => ({
+  t: s.timestamp || s.t,
+  d: s.duration || s.d,
+  s: s.subjectId || s.s,
+})
+
 // Asegurar que un subject tenga todos los campos necesarios
 const migrateSubject = (subject) => ({
   id: subject.id,
@@ -31,7 +53,10 @@ const migrateSubject = (subject) => ({
 })
 
 export function useStats() {
-  const [sessions, setSessions] = useLocalStorage('denso-sessions', [])
+  const [rawSessions, setRawSessions] = useLocalStorage('denso-sessions', [])
+
+  // Expand sessions for use in components
+  const sessions = useMemo(() => rawSessions.map(expandSession), [rawSessions])
   const [rawSubjects, setSubjects] = useLocalStorage('denso-subjects', [
     { id: '1', name: 'General', emoji: '💻', workDuration: 25 * 60, breakDuration: 5 * 60, todos: [] },
   ])
@@ -42,14 +67,12 @@ export function useStats() {
   const [currentSubject, setCurrentSubject] = useLocalStorage('denso-current-subject', '1')
 
   const addSession = (duration, subjectId = currentSubject) => {
-    const newSession = {
-      id: Date.now().toString(),
-      date: getDateKey(),
+    const newSession = compactSession({
       timestamp: Date.now(),
-      duration, // in seconds
+      duration,
       subjectId,
-    }
-    setSessions((prev) => [...prev, newSession])
+    })
+    setRawSessions((prev) => [...prev, newSession])
   }
 
   const addSubject = (name, emoji = null) => {

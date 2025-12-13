@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ArrowLeft, BarChart2, Trash2, CheckSquare, Pencil } from 'lucide-react'
+import { ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ArrowLeft, BarChart2, Trash2, CheckSquare, Pencil, Calendar } from 'lucide-react'
 import { useStats } from './hooks/useStats'
 import { useTimer } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
@@ -25,6 +25,7 @@ import './index.css'
 // Lazy load heavy panels
 const StatsPanel = lazy(() => import('./components/StatsPanel').then(m => ({ default: m.StatsPanel })))
 const SettingsPanel = lazy(() => import('./components/SettingsPanel').then(m => ({ default: m.SettingsPanel })))
+const CalendarPanel = lazy(() => import('./components/CalendarPanel').then(m => ({ default: m.CalendarPanel })))
 
 // Animated digit component with smooth slide
 function Digit({ value }) {
@@ -83,6 +84,7 @@ function TimerApp() {
   const [editingName, setEditingName] = useState('')
   const [showStats, setShowStats] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showCalendar, setShowCalendar] = useState(false)
   const [viewingTodosFor, setViewingTodosFor] = useState(null) // ID de asignatura para ver todos
   const [newTodoText, setNewTodoText] = useState('')
   const [subjectToDelete, setSubjectToDelete] = useState(null) // Para modal de confirmación
@@ -257,6 +259,13 @@ function TimerApp() {
           transition={{ duration: 0.2 }}
           style={{ pointerEvents: timer.isRunning ? 'none' : 'auto' }}
         >
+          <button
+            onClick={(e) => { e.currentTarget.blur(); setShowCalendar(true) }}
+            className="p-2 text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
+            aria-label="Abrir calendario"
+          >
+            <Calendar size={18} strokeWidth={1.5} aria-hidden="true" />
+          </button>
           <button
             onClick={(e) => { e.currentTarget.blur(); setShowStats(true) }}
             className="p-2 text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
@@ -694,6 +703,7 @@ function TimerApp() {
       {/* Panels - lazy loaded */}
       <Suspense fallback={null}>
         <StatsPanel isOpen={showStats} onClose={() => setShowStats(false)} stats={stats} subjects={subjects} weeklyGoal={weeklyGoal} sessions={sessions} />
+        <CalendarPanel isOpen={showCalendar} onClose={() => setShowCalendar(false)} subjects={subjects} />
         <SettingsPanel
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
