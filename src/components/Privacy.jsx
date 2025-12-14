@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
-import { useTheme } from '../hooks/useTheme'
 
 export function Privacy() {
-  const { isDark } = useTheme()
 
   return (
     <div className="min-h-screen bg-[var(--bg)] px-6 py-12">

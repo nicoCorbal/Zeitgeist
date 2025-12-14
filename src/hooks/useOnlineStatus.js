@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 /**
  * Hook to track online/offline status
@@ -9,13 +9,15 @@ export function useOnlineStatus() {
     typeof navigator !== 'undefined' ? navigator.onLine : true
   )
   const [wasOffline, setWasOffline] = useState(false)
+  const wasOfflineRef = useRef(false)
 
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true)
       // Track that we came back online (for showing "back online" message)
-      if (!isOnline) {
+      if (wasOfflineRef.current) {
         setWasOffline(true)
+        wasOfflineRef.current = false
         // Reset after 3 seconds
         setTimeout(() => setWasOffline(false), 3000)
       }
@@ -23,6 +25,7 @@ export function useOnlineStatus() {
 
     const handleOffline = () => {
       setIsOnline(false)
+      wasOfflineRef.current = true
     }
 
     window.addEventListener('online', handleOnline)
@@ -32,7 +35,7 @@ export function useOnlineStatus() {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
     }
-  }, [isOnline])
+  }, [])
 
   // Check if service worker is registered and active
   const [hasServiceWorker, setHasServiceWorker] = useState(false)

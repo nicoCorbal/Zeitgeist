@@ -5,7 +5,7 @@ import { EmojiPicker } from './EmojiPicker'
 import { ThemePicker } from './ThemePicker'
 import { SoundPicker } from './SoundPicker'
 import { useFocusTrap } from '../hooks/useFocusTrap'
-import { DURATIONS, EASINGS, staggerContainer } from '../utils/animations'
+import { DURATIONS, EASINGS } from '../utils/animations'
 import { exportData, importData, getDataStats } from '../utils/dataExport'
 
 const containerVariants = {

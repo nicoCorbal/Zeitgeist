@@ -98,10 +98,14 @@ export function useStats() {
 
   const deleteSubject = (id) => {
     if (subjects.length <= 1) return // No permitir borrar el último
-    setSubjects((prev) => prev.filter((s) => s.id !== id))
-    if (currentSubject === id) {
-      setCurrentSubject(subjects[0].id)
-    }
+    setSubjects((prev) => {
+      const filtered = prev.filter((s) => s.id !== id)
+      // Update currentSubject inside callback to avoid race condition
+      if (currentSubject === id && filtered.length > 0) {
+        setCurrentSubject(filtered[0].id)
+      }
+      return filtered
+    })
   }
 
   // Todo CRUD

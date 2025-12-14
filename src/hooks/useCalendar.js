@@ -14,7 +14,7 @@ const CODE_TO_TYPE = { 's': 'study-block', 'e': 'exam', 'p': 'personal' }
 
 // Expand compact event to full format
 const expandEvent = (e) => ({
-  id: e.i,
+  id: e.i || e.id || `fallback-${e.a || Date.now()}`,
   type: CODE_TO_TYPE[e.t] || e.type || 'study-block', // Support both formats
   title: e.n || e.title,
   date: e.d || e.date,
@@ -84,7 +84,7 @@ export function useCalendar() {
         if ((e.i || e.id) !== id) return e
         // Toggle completed flag in compact format
         if (e.c === 1) {
-          const { c, ...rest } = e
+          const { c: _c, ...rest } = e
           return rest
         }
         return { ...e, c: 1 }

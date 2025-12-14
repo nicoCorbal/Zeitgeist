@@ -116,8 +116,9 @@ export const ACHIEVEMENTS = [
     icon: 'sun',
     condition: (sessions) =>
       sessions.some((s) => {
-        const hour = new Date(s.date).getHours()
-        return hour < 7
+        const date = new Date(s.timestamp || s.date)
+        if (isNaN(date.getTime())) return false
+        return date.getHours() < 7
       }),
   },
   {
@@ -127,8 +128,9 @@ export const ACHIEVEMENTS = [
     icon: 'moon',
     condition: (sessions) =>
       sessions.some((s) => {
-        const hour = new Date(s.date).getHours()
-        return hour >= 23
+        const date = new Date(s.timestamp || s.date)
+        if (isNaN(date.getTime())) return false
+        return date.getHours() >= 23
       }),
   },
   {
@@ -140,7 +142,9 @@ export const ACHIEVEMENTS = [
       let saturday = false
       let sunday = false
       sessions.forEach((s) => {
-        const day = new Date(s.date).getDay()
+        const date = new Date(s.timestamp || s.date)
+        if (isNaN(date.getTime())) return
+        const day = date.getDay()
         if (day === 6) saturday = true
         if (day === 0) sunday = true
       })

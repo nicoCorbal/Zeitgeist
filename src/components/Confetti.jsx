@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DURATIONS, EASINGS } from '../utils/animations'
 
@@ -7,7 +7,7 @@ import { DURATIONS, EASINGS } from '../utils/animations'
  * Inspired by Apple's tasteful celebrations - minimal, elegant
  */
 
-// Generate random particles
+// Generate random particles with pre-computed animation values
 const generateParticles = (count = 12) => {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
@@ -16,6 +16,10 @@ const generateParticles = (count = 12) => {
     duration: DURATIONS.slower + Math.random() * 0.4,
     size: 4 + Math.random() * 4,
     rotation: Math.random() * 360,
+    // Pre-generate animation values to avoid Math.random() in render
+    yOffset1: Math.random() * 40,
+    yOffset2: Math.random() * 60,
+    xOffset: (Math.random() - 0.5) * 100,
   }))
 }
 
@@ -38,8 +42,8 @@ function Particle({ particle, color }) {
       }}
       animate={{
         opacity: [0, 1, 1, 0],
-        y: [0, -60 - Math.random() * 40, -100 - Math.random() * 60],
-        x: [(Math.random() - 0.5) * 100],
+        y: [0, -60 - particle.yOffset1, -100 - particle.yOffset2],
+        x: [particle.xOffset],
         scale: [0, 1, 0.8, 0],
         rotate: particle.rotation,
       }}
@@ -182,19 +186,3 @@ export function SuccessCheck({ isVisible, onComplete }) {
   )
 }
 
-/**
- * Hook for managing celebration state
- */
-export function useCelebration() {
-  const [isActive, setIsActive] = useState(false)
-
-  const celebrate = useCallback(() => {
-    setIsActive(true)
-  }, [])
-
-  const reset = useCallback(() => {
-    setIsActive(false)
-  }, [])
-
-  return { isActive, celebrate, reset }
-}
