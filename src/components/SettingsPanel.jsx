@@ -1,4 +1,5 @@
 import { useState, useEffect, useId, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Target, Volume2, VolumeX, Clock, Sparkles, Download, Upload, Database, Focus } from 'lucide-react'
 import { EmojiPicker } from './EmojiPicker'
@@ -699,12 +700,12 @@ export function SettingsPanel({
               <div className="flex items-center justify-center gap-3 text-[11px] text-[var(--text-tertiary)]">
                 <span>Denso v1.0</span>
                 <span>·</span>
-                <a
-                  href="/privacy"
+                <Link
+                  to="/privacy"
                   className="transition-colors hover:text-[var(--text-secondary)]"
                 >
                   Privacidad
-                </a>
+                </Link>
               </div>
             </motion.div>
           </motion.div>

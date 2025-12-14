@@ -920,9 +920,9 @@ function App() {
     navigate('/app')
   }
 
-  // Redirect first-time visitors to landing (unless already on /landing)
+  // Redirect first-time visitors to landing (unless already on /landing or /privacy)
   useEffect(() => {
-    if (!hasVisited && location.pathname !== '/landing' && location.pathname !== '/') {
+    if (!hasVisited && location.pathname !== '/landing' && location.pathname !== '/' && location.pathname !== '/privacy') {
       navigate('/landing')
     }
   }, [hasVisited, location.pathname, navigate])

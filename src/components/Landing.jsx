@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
 import { Play, Target, Palette, WifiOff, Sun, Moon, ArrowRight, Timer, BarChart3, Trophy, Check, Calendar } from 'lucide-react'
@@ -71,7 +71,20 @@ function FeatureCard({ feature, index }) {
 }
 
 export function Landing({ onEnterApp }) {
-  const { setTheme, isDark } = useTheme()
+  const { theme, setTheme, isDark } = useTheme()
+
+  // Force dark theme on landing, restore original on unmount
+  useEffect(() => {
+    const originalTheme = theme
+    if (theme !== 'dark' && theme !== 'light') {
+      setTheme('dark')
+    }
+    return () => {
+      if (originalTheme !== 'dark' && originalTheme !== 'light') {
+        setTheme(originalTheme)
+      }
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleLandingTheme = () => {
     setTheme(isDark ? 'light' : 'dark')
