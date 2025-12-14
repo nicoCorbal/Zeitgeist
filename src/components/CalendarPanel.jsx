@@ -293,7 +293,6 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                             <ul className="space-y-2">
                               {upcomingExams.map((exam, index) => {
                                 const daysUntil = getDaysUntil(exam.date)
-                                const isUrgent = daysUntil <= 3 && daysUntil >= 0
                                 const subject = subjects.find((s) => s.id === exam.subjectId)
 
                                 return (
@@ -314,7 +313,6 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                                     >
                                       <ProgressRing
                                         progress={getExamProgress(exam.createdAt, exam.date)}
-                                        isUrgent={isUrgent}
                                         daysUntil={daysUntil}
                                       />
                                       <div className="flex-1 min-w-0">
@@ -440,7 +438,7 @@ function EventItem({ event, subjects, onToggle, onEdit, onDelete, getEventTypeCo
 }
 
 // Progress ring component for exam countdown
-function ProgressRing({ progress, isUrgent, daysUntil }) {
+function ProgressRing({ progress, daysUntil }) {
   const size = 40
   const strokeWidth = 3
   const radius = (size - strokeWidth) / 2
@@ -465,7 +463,7 @@ function ProgressRing({ progress, isUrgent, daysUntil }) {
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke={isUrgent ? '#ef4444' : 'var(--text-secondary)'}
+          stroke="var(--text)"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
@@ -475,7 +473,7 @@ function ProgressRing({ progress, isUrgent, daysUntil }) {
       </svg>
       {/* Center text */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className={`text-[11px] font-semibold tabular-nums ${isUrgent ? 'text-red-500' : 'text-[var(--text-secondary)]'}`}>
+        <span className="text-[11px] font-semibold tabular-nums text-[var(--text)]">
           {daysUntil >= 0 ? daysUntil : '−'}
         </span>
       </div>
