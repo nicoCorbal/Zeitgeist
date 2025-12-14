@@ -319,7 +319,7 @@ function TimerApp() {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
-                    className="absolute left-1/2 top-full z-20 mt-2 w-80 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] shadow-lg"
+                    className="absolute left-1/2 top-full z-20 mt-2 w-[calc(100vw-2rem)] max-w-80 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] shadow-lg"
                   >
                     {viewingTodosFor ? (
                       // Vista de todos de una asignatura
@@ -365,7 +365,7 @@ function TimerApp() {
                               <span className="flex-1 text-[13px] text-[var(--text-tertiary)] line-through">{todo.text}</span>
                               <button
                                 onClick={() => deleteTodo(viewingTodosFor, todo.id)}
-                                className="p-1 text-[var(--text-tertiary)] opacity-0 transition-opacity hover:text-[var(--text)] group-hover:opacity-100"
+                                className="p-1 text-[var(--text-tertiary)] opacity-100 transition-opacity hover:text-[var(--text)] md:opacity-0 md:group-hover:opacity-100"
                               >
                                 <X size={12} />
                               </button>
@@ -460,7 +460,7 @@ function TimerApp() {
                                     setEditingSubject(s.id)
                                     setEditingName(s.name)
                                   }}
-                                  className="p-1 text-[var(--text-tertiary)] opacity-0 transition-opacity hover:text-[var(--text)] group-hover:opacity-100"
+                                  className="p-1 text-[var(--text-tertiary)] opacity-100 transition-opacity hover:text-[var(--text)] md:opacity-0 md:group-hover:opacity-100"
                                   title="Editar nombre"
                                 >
                                   <Pencil size={14} />
@@ -471,7 +471,7 @@ function TimerApp() {
                                       e.stopPropagation()
                                       setSubjectToDelete(s)
                                     }}
-                                    className="p-1 text-[var(--text-tertiary)] opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100"
+                                    className="p-1 text-[var(--text-tertiary)] opacity-100 transition-opacity hover:text-red-500 md:opacity-0 md:group-hover:opacity-100"
                                   >
                                     <Trash2 size={14} />
                                   </button>
