@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://denso.vercel.app/sitemap.xml
+Sitemap: https://denso.study/sitemap.xml
