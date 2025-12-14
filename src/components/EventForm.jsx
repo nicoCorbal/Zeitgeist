@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, BookOpen, GraduationCap, Heart } from 'lucide-react'
 
@@ -10,14 +10,28 @@ export function EventForm({
   initialDate = null,
   editingEvent = null,
 }) {
-  const [type, setType] = useState(editingEvent?.type || 'study-block')
-  const [title, setTitle] = useState(editingEvent?.title || '')
-  const [date, setDate] = useState(editingEvent?.date || initialDate || '')
-  const [endDate, setEndDate] = useState(editingEvent?.date || initialDate || '')
-  const [time, setTime] = useState(editingEvent?.time || '')
-  const [duration, setDuration] = useState(editingEvent?.duration || 60)
-  const [subjectId, setSubjectId] = useState(editingEvent?.subjectId || '')
+  const [type, setType] = useState('study-block')
+  const [title, setTitle] = useState('')
+  const [date, setDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [time, setTime] = useState('')
+  const [duration, setDuration] = useState(60)
+  const [subjectId, setSubjectId] = useState('')
   const [useRange, setUseRange] = useState(false)
+
+  // Reset form when opening or when editingEvent changes
+  useEffect(() => {
+    if (isOpen) {
+      setType(editingEvent?.type || 'study-block')
+      setTitle(editingEvent?.title || '')
+      setDate(editingEvent?.date || initialDate || '')
+      setEndDate(editingEvent?.date || initialDate || '')
+      setTime(editingEvent?.time || '')
+      setDuration(editingEvent?.duration || 60)
+      setSubjectId(editingEvent?.subjectId || '')
+      setUseRange(false)
+    }
+  }, [isOpen, editingEvent, initialDate])
 
   const getDaysBetween = (startStr, endStr) => {
     const start = new Date(startStr + 'T12:00:00')
