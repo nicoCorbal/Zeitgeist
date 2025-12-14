@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, Target, BookOpen, ChevronRight, Check, Shield } from 'lucide-react'
+import { Clock, Target, BookOpen, ChevronRight, Check, Shield, Calendar } from 'lucide-react'
 import { DURATIONS, EASINGS } from '../utils/animations'
 
 const STEPS = [
@@ -16,6 +16,12 @@ const STEPS = [
     title: 'Tus datos son tuyos',
     description: 'Todo se guarda en tu dispositivo, no en la nube. Desde ajustes puedes descargar un archivo con tus datos y subirlo en otro dispositivo o navegador.',
     warning: 'Si borras los datos del navegador o cambias de dispositivo sin copia, perderás tu progreso.',
+  },
+  {
+    id: 'calendar',
+    icon: Calendar,
+    title: 'Planifica tus exámenes',
+    description: 'Añade exámenes y bloques de estudio al calendario. Verás una cuenta atrás visual para no perder de vista tus fechas importantes.',
   },
   {
     id: 'goal',
