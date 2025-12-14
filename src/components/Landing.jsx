@@ -291,7 +291,7 @@ export function Landing({ onEnterApp }) {
 
       {/* Footer */}
       <footer className="border-t border-[var(--border)] px-6 py-8">
-        <div className="mx-auto flex max-w-5xl items-center justify-between text-[13px] text-[var(--text-tertiary)]">
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-3 text-[13px] text-[var(--text-tertiary)] sm:flex-row sm:justify-between">
           <div className="flex items-center gap-2">
             <img
               src="/logo.svg"
@@ -305,7 +305,7 @@ export function Landing({ onEnterApp }) {
             <Link to="/privacy" className="transition-colors hover:text-[var(--text-secondary)]">
               Privacidad
             </Link>
-            <span>Hecho para estudiantes</span>
+            <span className="hidden sm:inline">Hecho para estudiantes</span>
           </div>
         </div>
       </footer>
