@@ -20,7 +20,7 @@ export function Privacy() {
 
         <div className="mt-8 space-y-6 text-[15px] leading-relaxed text-[var(--text-secondary)]">
           <p>
-            <strong className="text-[var(--text)]">Denso no recopila ningún dato personal.</strong>
+            <strong className="text-[var(--text)]">Tu privacidad es importante para nosotros.</strong>
           </p>
 
           <p>
@@ -34,13 +34,23 @@ export function Privacy() {
           </p>
 
           <ul className="list-disc space-y-2 pl-5">
-            <li>Tus datos nunca salen de tu dispositivo</li>
-            <li>No hay servidores que almacenen tu información</li>
+            <li>Tus datos de estudio nunca salen de tu dispositivo</li>
+            <li>No hay servidores que almacenen tu información personal</li>
             <li>No hay cuentas de usuario ni registro</li>
-            <li>No hay cookies de seguimiento</li>
-            <li>No hay analytics ni tracking de ningún tipo</li>
-            <li>No compartimos datos con terceros (porque no los tenemos)</li>
+            <li>No compartimos tus datos de estudio con terceros</li>
           </ul>
+
+          <p>
+            <strong className="text-[var(--text)]">Analytics</strong>
+          </p>
+
+          <p>
+            Utilizamos Google Analytics para entender cómo se usa la aplicación de forma
+            agregada y anónima. Esto nos ayuda a mejorar Denso. Google Analytics puede
+            recopilar información como tu ubicación aproximada, tipo de dispositivo y
+            páginas visitadas. No recopilamos información sobre tus sesiones de estudio
+            ni materias.
+          </p>
 
           <p>
             Si borras los datos de tu navegador o usas otro dispositivo, empezarás
@@ -49,7 +59,7 @@ export function Privacy() {
           </p>
 
           <p className="text-[var(--text-tertiary)]">
-            Última actualización: Diciembre 2025
+            Última actualización: Diciembre 2024
           </p>
         </div>
       </div>
