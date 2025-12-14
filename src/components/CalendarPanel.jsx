@@ -5,27 +5,6 @@ import { useFocusTrap } from '../hooks/useFocusTrap'
 import { useCalendar } from '../hooks/useCalendar'
 import { CalendarGrid } from './CalendarGrid'
 import { EventForm } from './EventForm'
-import { DURATIONS, EASINGS } from '../utils/animations'
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-      delayChildren: DURATIONS.instant
-    }
-  }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: DURATIONS.normal, ease: EASINGS.smooth }
-  }
-}
 
 export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
   const titleId = useId()
@@ -61,7 +40,15 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
   const monthEvents = getEventsForMonth(year, month)
-  const selectedDateEvents = selectedDate ? getEventsForDate(selectedDate) : []
+  const selectedDateEvents = selectedDate
+    ? getEventsForDate(selectedDate).sort((a, b) => {
+        // Events without time come first, then sort by time
+        if (!a.time && !b.time) return 0
+        if (!a.time) return -1
+        if (!b.time) return 1
+        return a.time.localeCompare(b.time)
+      })
+    : []
 
   const handlePrevMonth = () => {
     setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1))
@@ -93,11 +80,6 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
     }
     setShowEventForm(false)
     setEditingEvent(null)
-  }
-
-  const formatDate = (dateStr) => {
-    const date = new Date(dateStr + 'T12:00:00')
-    return date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' })
   }
 
   const formatShortDate = (dateStr) => {
@@ -132,7 +114,7 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={onClose}
+              onClick={handleClose}
               className="fixed inset-0 z-40 bg-black/5 backdrop-blur-[2px]"
               aria-hidden="true"
             />
@@ -287,15 +269,25 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                                   initial={{ opacity: 0, y: 5 }}
                                   animate={{ opacity: 1, y: 0 }}
                                   transition={{ delay: index * 0.03 }}
-                                  className="flex items-center justify-between rounded-lg py-2.5 text-[13px]"
                                 >
-                                  <div className="flex items-center gap-3">
-                                    <div className={`h-2 w-2 rounded-full ${getEventTypeColor(event.type)}`} />
-                                    <span className="text-[var(--text)]">{event.title}</span>
-                                  </div>
-                                  <span className="text-[12px] tabular-nums text-[var(--text-tertiary)]">
-                                    {formatShortDate(event.date)}
-                                  </span>
+                                  <button
+                                    onClick={() => {
+                                      // Navigate to the event's date
+                                      const [y, m] = event.date.split('-').map(Number)
+                                      setCurrentDate(new Date(y, m - 1, 1))
+                                      setSelectedDate(event.date)
+                                      setActiveTab('selected')
+                                    }}
+                                    className="flex w-full items-center justify-between rounded-lg py-2.5 text-[13px] transition-colors hover:bg-[var(--bg-secondary)]"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div className={`h-2 w-2 rounded-full ${getEventTypeColor(event.type)}`} />
+                                      <span className="text-[var(--text)]">{event.title}</span>
+                                    </div>
+                                    <span className="text-[12px] tabular-nums text-[var(--text-tertiary)]">
+                                      {formatShortDate(event.date)}
+                                    </span>
+                                  </button>
                                 </motion.li>
                               ))}
                             </ul>
