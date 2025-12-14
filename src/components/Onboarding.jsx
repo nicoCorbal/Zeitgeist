@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Clock, Target, BookOpen, ChevronRight, Check, Shield, Calendar } from 'lucide-react'
 import { DURATIONS, EASINGS } from '../utils/animations'
+import { EMOJIS } from '../data/emojis'
 
 const STEPS = [
   {
@@ -74,16 +75,21 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
     return true
   }
 
-  const emojis = ['📚', '🧮', '🔬', '📝', '💻', '🎨', '🌍', '📖', '🧠', '✏️']
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg)] p-6"
+      className="fixed inset-0 z-50 flex flex-col bg-[var(--bg)]"
+      style={{
+        paddingTop: 'max(1.5rem, env(safe-area-inset-top))',
+        paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))',
+        paddingLeft: 'max(1.5rem, env(safe-area-inset-left))',
+        paddingRight: 'max(1.5rem, env(safe-area-inset-right))',
+      }}
     >
-      <div className="w-full max-w-sm">
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="w-full max-w-sm">
         {/* Progress dots */}
         <div className="mb-8 flex justify-center gap-2">
           {STEPS.map((_, i) => (
@@ -134,8 +140,8 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
 
             {/* Warning */}
             {step.warning && (
-              <p className="mt-3 text-[12px] text-amber-600 dark:text-amber-500">
-                {step.warning}
+              <p className="mt-3 text-[12px] text-[var(--text-tertiary)]">
+                ⚠️ {step.warning}
               </p>
             )}
 
@@ -172,20 +178,22 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
             {step.inputType === 'subject' && (
               <div className="mb-8 space-y-4">
                 {/* Emoji picker */}
-                <div className="flex flex-wrap justify-center gap-2">
-                  {emojis.map((emoji) => (
-                    <button
-                      key={emoji}
-                      onClick={() => setSubjectEmoji(emoji)}
-                      className={`flex h-10 w-10 items-center justify-center rounded-lg text-xl transition-all ${
-                        subjectEmoji === emoji
-                          ? 'bg-[var(--text)] scale-110'
-                          : 'bg-[var(--bg-secondary)] hover:scale-105'
-                      }`}
-                    >
-                      {emoji}
-                    </button>
-                  ))}
+                <div className="max-h-32 overflow-y-auto rounded-lg bg-[var(--bg-secondary)] p-2">
+                  <div className="grid grid-cols-8 gap-1">
+                    {EMOJIS.map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => setSubjectEmoji(emoji)}
+                        className={`flex h-9 w-9 items-center justify-center rounded-lg text-lg transition-all ${
+                          subjectEmoji === emoji
+                            ? 'bg-[var(--text)] scale-110'
+                            : 'hover:bg-[var(--bg)] hover:scale-105'
+                        }`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Name input */}
@@ -236,6 +244,7 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
               Saltar tutorial
             </button>
           )}
+        </div>
         </div>
       </div>
     </motion.div>
