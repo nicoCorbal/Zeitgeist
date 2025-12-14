@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
-import { Play, Target, Palette, WifiOff, Sun, Moon, ArrowRight, Timer, BarChart3, Trophy, Check } from 'lucide-react'
+import { Play, Target, Palette, WifiOff, Sun, Moon, ArrowRight, Timer, BarChart3, Trophy, Check, Calendar } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 
 const features = [
@@ -14,6 +14,11 @@ const features = [
     icon: Target,
     title: 'Materias',
     description: 'Organiza tu tiempo por asignaturas. Configura duraciones personalizadas para cada una.',
+  },
+  {
+    icon: Calendar,
+    title: 'Calendario',
+    description: 'Planifica exámenes y bloques de estudio. Cuenta atrás visual para tus fechas importantes.',
   },
   {
     icon: BarChart3,
@@ -29,11 +34,6 @@ const features = [
     icon: Palette,
     title: '8 Temas',
     description: 'Light, dark, gradientes. Encuentra el ambiente perfecto para concentrarte.',
-  },
-  {
-    icon: WifiOff,
-    title: 'Sin conexión',
-    description: 'Si se va internet, no pasa nada. Tus datos están en tu dispositivo.',
   },
 ]
 

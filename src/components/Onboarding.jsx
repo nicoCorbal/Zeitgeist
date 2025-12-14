@@ -8,7 +8,7 @@ const STEPS = [
     id: 'welcome',
     icon: Clock,
     title: 'Bienvenido a Denso',
-    description: 'Tu compañero de estudio minimalista. Pomodoro o tiempo libre, tú decides.',
+    description: 'Temporizador, calendario y estadísticas de estudio. Todo en un solo lugar, sin complicaciones.',
   },
   {
     id: 'data',
