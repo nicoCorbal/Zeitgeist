@@ -1,6 +1,6 @@
 import { useState, useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Plus, Calendar, Trash2, Check } from 'lucide-react'
+import { X, Plus, Calendar, Trash2, Check, Pencil } from 'lucide-react'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import { useCalendar } from '../hooks/useCalendar'
 import { CalendarGrid } from './CalendarGrid'
@@ -29,7 +29,20 @@ const itemVariants = {
 
 export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
   const titleId = useId()
-  const panelRef = useFocusTrap(isOpen, onClose)
+  const [showEventForm, setShowEventForm] = useState(false)
+  const [editingEvent, setEditingEvent] = useState(null)
+
+  // Handle ESC: close EventForm first, then CalendarPanel
+  const handleClose = () => {
+    if (showEventForm) {
+      setShowEventForm(false)
+      setEditingEvent(null)
+    } else {
+      onClose()
+    }
+  }
+
+  const panelRef = useFocusTrap(isOpen, handleClose)
 
   const {
     addEvent,
@@ -43,8 +56,6 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
 
   const [currentDate, setCurrentDate] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState(null)
-  const [showEventForm, setShowEventForm] = useState(false)
-  const [editingEvent, setEditingEvent] = useState(null)
   const [activeTab, setActiveTab] = useState('selected') // 'selected' | 'upcoming'
 
   const year = currentDate.getFullYear()
@@ -353,10 +364,7 @@ function EventItem({ event, subjects, onToggle, onEdit, onDelete, getEventTypeCo
         {event.completed && <Check size={12} />}
       </motion.button>
 
-      <div
-        className="flex-1 min-w-0 cursor-pointer"
-        onClick={onEdit}
-      >
+      <div className="flex-1 min-w-0">
         <p
           className={`truncate text-[13px] font-medium text-[var(--text)] ${
             event.completed ? 'line-through' : ''
@@ -375,15 +383,26 @@ function EventItem({ event, subjects, onToggle, onEdit, onDelete, getEventTypeCo
         </div>
       </div>
 
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={onDelete}
-        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[var(--text-tertiary)] opacity-100 transition-all hover:bg-red-500/10 hover:text-red-500 md:opacity-0 md:group-hover:opacity-100"
-        aria-label="Eliminar evento"
-      >
-        <Trash2 size={14} />
-      </motion.button>
+      <div className="flex items-center gap-1">
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onEdit}
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[var(--text-tertiary)] opacity-100 transition-all hover:bg-[var(--bg-secondary)] hover:text-[var(--text)] md:opacity-0 md:group-hover:opacity-100"
+          aria-label="Editar evento"
+        >
+          <Pencil size={14} />
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onDelete}
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[var(--text-tertiary)] opacity-100 transition-all hover:bg-red-500/10 hover:text-red-500 md:opacity-0 md:group-hover:opacity-100"
+          aria-label="Eliminar evento"
+        >
+          <Trash2 size={14} />
+        </motion.button>
+      </div>
     </div>
   )
 }
