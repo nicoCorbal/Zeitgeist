@@ -30,7 +30,7 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
     toggleComplete,
     getEventsForDate,
     getEventsForMonth,
-    upcomingEvents,
+    upcomingExams,
   } = useCalendar()
 
   const [currentDate, setCurrentDate] = useState(() => new Date())
@@ -85,6 +85,21 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
   const formatShortDate = (dateStr) => {
     const date = new Date(dateStr + 'T12:00:00')
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+  }
+
+  const getDaysUntil = (dateStr) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const target = new Date(dateStr + 'T00:00:00')
+    const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24))
+    return diff
+  }
+
+  const formatCountdown = (days) => {
+    if (days === 0) return 'Hoy'
+    if (days === 1) return 'Mañana'
+    if (days < 0) return 'Pasado'
+    return `${days} días`
   }
 
   const getEventTypeColor = (type) => {
@@ -199,10 +214,10 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                             : 'text-[var(--text-tertiary)]'
                         }`}
                       >
-                        Próximamente
-                        {upcomingEvents.length > 0 && (
+                        Exámenes
+                        {upcomingExams.length > 0 && (
                           <span className="ml-1.5 text-[10px] text-[var(--text-tertiary)]">
-                            {upcomingEvents.length}
+                            {upcomingExams.length}
                           </span>
                         )}
                       </button>
@@ -257,39 +272,51 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                           exit={{ opacity: 0, x: -10 }}
                           transition={{ duration: 0.15 }}
                         >
-                          {upcomingEvents.length === 0 ? (
+                          {upcomingExams.length === 0 ? (
                             <p className="py-8 text-center text-[13px] text-[var(--text-tertiary)]">
-                              No hay eventos próximos
+                              No hay exámenes próximos
                             </p>
                           ) : (
-                            <ul className="space-y-1">
-                              {upcomingEvents.map((event, index) => (
-                                <motion.li
-                                  key={event.id}
-                                  initial={{ opacity: 0, y: 5 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ delay: index * 0.03 }}
-                                >
-                                  <button
-                                    onClick={() => {
-                                      // Navigate to the event's date
-                                      const [y, m] = event.date.split('-').map(Number)
-                                      setCurrentDate(new Date(y, m - 1, 1))
-                                      setSelectedDate(event.date)
-                                      setActiveTab('selected')
-                                    }}
-                                    className="flex w-full items-center justify-between rounded-lg py-2.5 text-[13px] transition-colors hover:bg-[var(--bg-secondary)]"
+                            <ul className="space-y-2">
+                              {upcomingExams.map((exam, index) => {
+                                const daysUntil = getDaysUntil(exam.date)
+                                const isUrgent = daysUntil <= 3 && daysUntil >= 0
+                                const subject = subjects.find((s) => s.id === exam.subjectId)
+
+                                return (
+                                  <motion.li
+                                    key={exam.id}
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.05 }}
                                   >
-                                    <div className="flex items-center gap-3">
-                                      <div className={`h-2 w-2 rounded-full ${getEventTypeColor(event.type)}`} />
-                                      <span className="text-[var(--text)]">{event.title}</span>
-                                    </div>
-                                    <span className="text-[12px] tabular-nums text-[var(--text-tertiary)]">
-                                      {formatShortDate(event.date)}
-                                    </span>
-                                  </button>
-                                </motion.li>
-                              ))}
+                                    <button
+                                      onClick={() => {
+                                        const [y, m] = exam.date.split('-').map(Number)
+                                        setCurrentDate(new Date(y, m - 1, 1))
+                                        setSelectedDate(exam.date)
+                                        setActiveTab('selected')
+                                      }}
+                                      className="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] p-3 text-left transition-colors hover:border-[var(--text-tertiary)]"
+                                    >
+                                      <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg ${isUrgent ? 'bg-red-500/10 text-red-500' : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'}`}>
+                                        <span className="text-[13px] font-bold tabular-nums">
+                                          {daysUntil >= 0 ? daysUntil : '−'}
+                                        </span>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="truncate text-[13px] font-medium text-[var(--text)]">
+                                          {subject?.emoji && `${subject.emoji} `}
+                                          {exam.title}
+                                        </p>
+                                        <p className="text-[11px] text-[var(--text-tertiary)]">
+                                          {formatShortDate(exam.date)} · {formatCountdown(daysUntil)}
+                                        </p>
+                                      </div>
+                                    </button>
+                                  </motion.li>
+                                )
+                              })}
                             </ul>
                           )}
                         </motion.div>
