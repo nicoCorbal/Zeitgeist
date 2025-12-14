@@ -99,7 +99,20 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
     if (days === 0) return 'Hoy'
     if (days === 1) return 'Mañana'
     if (days < 0) return 'Pasado'
-    return `${days} días`
+    return `${days}d`
+  }
+
+  // Calculate progress: time elapsed / total time
+  const getExamProgress = (createdAt, examDate) => {
+    const created = new Date(createdAt)
+    const exam = new Date(examDate + 'T00:00:00')
+    const now = new Date()
+
+    const totalTime = exam - created
+    const elapsedTime = now - created
+
+    if (totalTime <= 0) return 1
+    return Math.min(1, Math.max(0, elapsedTime / totalTime))
   }
 
   const getEventTypeColor = (type) => {
@@ -299,11 +312,11 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                                       }}
                                       className="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] p-3 text-left transition-colors hover:border-[var(--text-tertiary)]"
                                     >
-                                      <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg ${isUrgent ? 'bg-red-500/10 text-red-500' : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'}`}>
-                                        <span className="text-[13px] font-bold tabular-nums">
-                                          {daysUntil >= 0 ? daysUntil : '−'}
-                                        </span>
-                                      </div>
+                                      <ProgressRing
+                                        progress={getExamProgress(exam.createdAt, exam.date)}
+                                        isUrgent={isUrgent}
+                                        daysUntil={daysUntil}
+                                      />
                                       <div className="flex-1 min-w-0">
                                         <p className="truncate text-[13px] font-medium text-[var(--text)]">
                                           {subject?.emoji && `${subject.emoji} `}
@@ -421,6 +434,50 @@ function EventItem({ event, subjects, onToggle, onEdit, onDelete, getEventTypeCo
         >
           <Trash2 size={14} />
         </motion.button>
+      </div>
+    </div>
+  )
+}
+
+// Progress ring component for exam countdown
+function ProgressRing({ progress, isUrgent, daysUntil }) {
+  const size = 40
+  const strokeWidth = 3
+  const radius = (size - strokeWidth) / 2
+  const circumference = radius * 2 * Math.PI
+  const offset = circumference - progress * circumference
+
+  return (
+    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        {/* Background circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="var(--border)"
+          strokeWidth={strokeWidth}
+        />
+        {/* Progress circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={isUrgent ? '#ef4444' : 'var(--text-secondary)'}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="transition-all duration-500"
+        />
+      </svg>
+      {/* Center text */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className={`text-[11px] font-semibold tabular-nums ${isUrgent ? 'text-red-500' : 'text-[var(--text-secondary)]'}`}>
+          {daysUntil >= 0 ? daysUntil : '−'}
+        </span>
       </div>
     </div>
   )
