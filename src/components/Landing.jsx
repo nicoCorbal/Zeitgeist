@@ -263,7 +263,7 @@ export function Landing({ onEnterApp }) {
               Características
             </h2>
             <p className="mt-4 text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text)]">
-              Todo lo que necesitas,<br />nada que no
+              Minimalista y funcional
             </p>
           </motion.div>
 
