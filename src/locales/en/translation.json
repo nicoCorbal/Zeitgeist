@@ -357,5 +357,20 @@
     "analytics": "We use Google Analytics to understand how the app is used in aggregate and anonymously. This helps us improve Denso. Google Analytics may collect information such as your approximate location, device type, and pages visited. We do not collect information about your study sessions or subjects.",
     "dataLoss": "If you clear your browser data or use another device, you will start from scratch. You can export your data from the app settings if you want to make a backup.",
     "lastUpdate": "Last updated: December 2024"
+  },
+  "stickyNotes": {
+    "add": "Add note",
+    "placeholder": "Write here...",
+    "doubleClick": "Double click to edit...",
+    "doubleClickHint": "double click · add note",
+    "title": "Sticky Notes",
+    "description": "Sticky notes per subject. Double click to create.",
+    "toggle": "Show/hide notes",
+    "count": "{{count}} note total",
+    "count_plural": "{{count}} notes total",
+    "noNotes": "No notes",
+    "clearAll": "Clear all",
+    "clearConfirm": "Delete all notes?",
+    "clearMessage": "All your sticky notes from all subjects will be deleted. This cannot be undone."
   }
 }

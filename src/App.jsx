@@ -18,6 +18,7 @@ import { Toast } from './components/Toast'
 import { OfflineBanner } from './components/OfflineBanner'
 import { Onboarding } from './components/Onboarding'
 import { AchievementToast } from './components/AchievementToast'
+import { StickyNotesLayer } from './components/StickyNotesLayer'
 import { Landing } from './components/Landing'
 import { Privacy } from './components/Privacy'
 import { formatTime, formatDuration } from './utils/time'
@@ -95,6 +96,8 @@ function TimerApp() {
   const [soundType, setSoundType] = useLocalStorage('denso-sound-type', 'bell')
   const [deepFocusEnabled, setDeepFocusEnabled] = useLocalStorage('denso-deep-focus', false)
   const [dailyGoal, setDailyGoal] = useLocalStorage('denso-daily-goal', 2 * 60 * 60) // 2 hours default
+  const [notesVisible, setNotesVisible] = useLocalStorage('denso-sticky-notes-visible', true)
+  const [allNotes, setAllNotes] = useLocalStorage('denso-sticky-notes', [])
 
 
   const { theme, setTheme } = useTheme()
@@ -599,9 +602,35 @@ function TimerApp() {
               )}
             </AnimatePresence>
 
+            {/* Shortcuts hint */}
+            <motion.p
+              className="mt-3 text-[10px] tracking-wide text-[var(--text-tertiary)]"
+              animate={{
+                opacity: (isFocusMode || isBreakMode) ? 0 : 0.6,
+                height: (isFocusMode || isBreakMode) ? 0 : 'auto',
+                marginTop: (isFocusMode || isBreakMode) ? 0 : 12
+              }}
+              transition={{
+                opacity: { duration: 0.15, delay: (isFocusMode || isBreakMode) ? 0 : 0.3 },
+                height: { duration: 0.4, ease: [0.4, 0, 0.2, 1], delay: (isFocusMode || isBreakMode) ? 0.08 : 0 },
+                marginTop: { duration: 0.4, ease: [0.4, 0, 0.2, 1], delay: (isFocusMode || isBreakMode) ? 0.08 : 0 }
+              }}
+            >
+              <span className="hidden sm:inline">{t('settings.shortcuts.space')}</span>
+              <span className="sm:hidden">tap</span>
+              {' · '}
+              {t('settings.shortcuts.playPause').toLowerCase()}
+              {notesVisible && (
+                <>
+                  <span className="mx-2 text-[var(--border)]">|</span>
+                  <span className="hidden sm:inline">{t('stickyNotes.doubleClickHint')}</span>
+                  <span className="sm:hidden">2x tap · nota</span>
+                </>
+              )}
+            </motion.p>
+
           </div>
 
-          
           {/* Controls */}
           <motion.div
             className="mt-6 flex items-center gap-4 sm:mt-10"
@@ -724,6 +753,10 @@ function TimerApp() {
           onDeepFocusToggle={() => setDeepFocusEnabled(!deepFocusEnabled)}
           dailyGoal={dailyGoal}
           onDailyGoalChange={setDailyGoal}
+          notesVisible={notesVisible}
+          onNotesVisibleToggle={() => setNotesVisible(!notesVisible)}
+          allNotes={allNotes}
+          onClearAllNotes={() => setAllNotes([])}
         />
       </Suspense>
 
@@ -853,6 +886,14 @@ function TimerApp() {
 
       {/* Offline indicator */}
       <OfflineBanner />
+
+      {/* Sticky Notes */}
+      <StickyNotesLayer
+        isVisible={!isDeepFocus && notesVisible}
+        subjectId={currentSubject}
+        allNotes={allNotes}
+        setAllNotes={setAllNotes}
+      />
 
       {/* Achievement notification */}
       <AchievementToast

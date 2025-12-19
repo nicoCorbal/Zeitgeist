@@ -357,5 +357,20 @@
     "analytics": "Utilizamos Google Analytics para entender cómo se usa la aplicación de forma agregada y anónima. Esto nos ayuda a mejorar Denso. Google Analytics puede recopilar información como tu ubicación aproximada, tipo de dispositivo y páginas visitadas. No recopilamos información sobre tus sesiones de estudio ni materias.",
     "dataLoss": "Si borras los datos de tu navegador o usas otro dispositivo, empezarás de cero. Puedes exportar tus datos desde los ajustes de la aplicación si quieres hacer una copia de seguridad.",
     "lastUpdate": "Última actualización: Diciembre 2024"
+  },
+  "stickyNotes": {
+    "add": "Añadir nota",
+    "placeholder": "Escribe aquí...",
+    "doubleClick": "Doble click para editar...",
+    "doubleClickHint": "doble click · añadir nota",
+    "title": "Notas",
+    "description": "Notas adhesivas por asignatura. Doble clic para crear.",
+    "toggle": "Mostrar/ocultar notas",
+    "count": "{{count}} nota total",
+    "count_plural": "{{count}} notas en total",
+    "noNotes": "Sin notas",
+    "clearAll": "Borrar todas",
+    "clearConfirm": "¿Eliminar todas las notas?",
+    "clearMessage": "Se eliminarán todas tus notas adhesivas de todas las asignaturas. Esta acción no se puede deshacer."
   }
 }

@@ -138,9 +138,11 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Remove focus outline for text inputs */
+/* Remove focus outline for text inputs and textareas */
 input[type="text"]:focus,
-input[type="text"]:focus-visible {
+input[type="text"]:focus-visible,
+textarea:focus,
+textarea:focus-visible {
   outline: none;
 }
 
@@ -206,7 +208,11 @@ button, [role="button"] {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Hide scrollbar for horizontal sliders */
+/* Hide scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

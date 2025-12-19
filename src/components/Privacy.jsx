@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 export function Privacy() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const points = t('privacy.points', { returnObjects: true })
 
   // Prevent indexing of this page
@@ -19,13 +20,13 @@ export function Privacy() {
   return (
     <div className="min-h-screen bg-[var(--bg)] px-6 py-12">
       <div className="mx-auto max-w-2xl">
-        <Link
-          to="/landing"
+        <button
+          onClick={() => navigate(-1)}
           className="inline-flex items-center gap-2 text-[14px] text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
         >
           <ArrowLeft size={16} />
           {t('common.back')}
-        </Link>
+        </button>
 
         <h1 className="mt-8 text-[32px] font-bold text-[var(--text)]">
           {t('privacy.title')}

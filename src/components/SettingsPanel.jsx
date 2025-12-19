@@ -1,7 +1,7 @@
 import { useState, useEffect, useId, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Target, Volume2, VolumeX, Clock, Sparkles, Download, Upload, Database, Focus, Globe } from 'lucide-react'
+import { X, Target, Volume2, VolumeX, Clock, Sparkles, Download, Upload, Database, Focus, Globe, StickyNote, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { EmojiPicker } from './EmojiPicker'
 import { ThemePicker } from './ThemePicker'
@@ -28,6 +28,106 @@ const itemVariants = {
     y: 0,
     transition: { duration: DURATIONS.normal, ease: EASINGS.smooth }
   }
+}
+
+function StickyNotesSection({ notesVisible, onToggle, allNotes, onClearAll }) {
+  const { t } = useTranslation()
+  const [showConfirm, setShowConfirm] = useState(false)
+
+  const handleClearAll = () => {
+    onClearAll()
+    setShowConfirm(false)
+  }
+
+  return (
+    <motion.section variants={itemVariants} aria-labelledby="stickynotes-section">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+          <StickyNote size={12} aria-hidden="true" />
+          <span id="stickynotes-section" className="text-[10px] font-semibold uppercase tracking-widest">
+            {t('stickyNotes.title')}
+          </span>
+        </div>
+        <button
+          role="switch"
+          aria-checked={notesVisible}
+          aria-label={t('stickyNotes.toggle')}
+          onClick={onToggle}
+          className={`relative h-6 w-11 rounded-full transition-colors ${
+            notesVisible ? 'bg-[var(--text)]' : 'bg-[var(--border)]'
+          }`}
+        >
+          <motion.div
+            className="absolute top-1 h-4 w-4 rounded-full bg-[var(--bg)]"
+            animate={{ left: notesVisible ? '24px' : '4px' }}
+            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+
+      <p className="mt-2 text-[12px] text-[var(--text-tertiary)]">
+        {t('stickyNotes.description')}
+      </p>
+
+      {allNotes.length > 0 && (
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-[12px] text-[var(--text-secondary)]">
+            {allNotes.length === 1
+              ? t('stickyNotes.count', { count: allNotes.length })
+              : t('stickyNotes.count_plural', { count: allNotes.length })
+            }
+          </span>
+          <button
+            onClick={() => setShowConfirm(true)}
+            className="text-[12px] font-medium text-red-500 transition-colors hover:text-red-600"
+          >
+            {t('stickyNotes.clearAll')}
+          </button>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+            onClick={() => setShowConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm rounded-xl bg-[var(--bg-solid)] p-5 shadow-xl"
+            >
+              <h3 className="text-[15px] font-semibold text-[var(--text)]">{t('stickyNotes.clearConfirm')}</h3>
+              <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+                {t('stickyNotes.clearMessage')}
+              </p>
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="flex-1 rounded-lg border border-[var(--border)] px-4 py-2.5 text-[13px] font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg-secondary)]"
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  onClick={handleClearAll}
+                  className="flex-1 rounded-lg bg-red-500 px-4 py-2.5 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+                >
+                  {t('common.delete')}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.section>
+  )
 }
 
 function DataManagementSection() {
@@ -225,6 +325,10 @@ export function SettingsPanel({
   onDeepFocusToggle,
   dailyGoal,
   onDailyGoalChange,
+  notesVisible,
+  onNotesVisibleToggle,
+  allNotes,
+  onClearAllNotes,
 }) {
   const { t, i18n } = useTranslation()
   const [goalHours, setGoalHours] = useState(Math.round(weeklyGoal / 3600))
@@ -520,6 +624,14 @@ export function SettingsPanel({
                   </p>
                 </motion.section>
 
+                {/* Sticky Notes */}
+                <StickyNotesSection
+                  notesVisible={notesVisible}
+                  onToggle={onNotesVisibleToggle}
+                  allNotes={allNotes}
+                  onClearAll={onClearAllNotes}
+                />
+
                 {/* Personalización de asignatura */}
                 <motion.section variants={itemVariants} aria-labelledby="customize-section">
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
@@ -737,6 +849,7 @@ export function SettingsPanel({
                 <span>·</span>
                 <Link
                   to="/privacy"
+                  onClick={onClose}
                   className="transition-colors hover:text-[var(--text-secondary)]"
                 >
                   {t('privacy.title')}
