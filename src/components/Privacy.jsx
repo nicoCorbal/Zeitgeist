@@ -1,7 +1,16 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 
 export function Privacy() {
+  // Prevent indexing of this page
+  useEffect(() => {
+    const meta = document.createElement('meta')
+    meta.name = 'robots'
+    meta.content = 'noindex, nofollow'
+    document.head.appendChild(meta)
+    return () => document.head.removeChild(meta)
+  }, [])
 
   return (
     <div className="min-h-screen bg-[var(--bg)] px-6 py-12">
