@@ -1,12 +1,14 @@
 import { useState, useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Plus, Calendar, Trash2, Check, Pencil } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import { useCalendar } from '../hooks/useCalendar'
 import { CalendarGrid } from './CalendarGrid'
 import { EventForm } from './EventForm'
 
 export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
+  const { t, i18n } = useTranslation()
   const titleId = useId()
   const [showEventForm, setShowEventForm] = useState(false)
   const [editingEvent, setEditingEvent] = useState(null)
@@ -84,7 +86,7 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
 
   const formatShortDate = (dateStr) => {
     const date = new Date(dateStr + 'T12:00:00')
-    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+    return date.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', { day: 'numeric', month: 'short' })
   }
 
   const getDaysUntil = (dateStr) => {
@@ -96,9 +98,9 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
   }
 
   const formatCountdown = (days) => {
-    if (days === 0) return 'Hoy'
-    if (days === 1) return 'Mañana'
-    if (days < 0) return 'Pasado'
+    if (days === 0) return t('common.today')
+    if (days === 1) return t('calendar.tomorrow')
+    if (days < 0) return t('calendar.past')
     return `${days}d`
   }
 
@@ -125,9 +127,9 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
 
   const getEventTypeLabel = (type) => {
     switch (type) {
-      case 'exam': return 'Examen'
-      case 'personal': return 'Personal'
-      default: return 'Estudio'
+      case 'exam': return t('calendar.exam')
+      case 'personal': return t('calendar.personal')
+      default: return t('calendar.study')
     }
   }
 
@@ -167,14 +169,14 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                     id={titleId}
                     className="text-[15px] font-semibold tracking-[-0.01em] text-[var(--text)]"
                   >
-                    Calendario
+                    {t('calendar.title')}
                   </h2>
                 </div>
                 <button
                   data-close-button
                   onClick={onClose}
                   className="rounded-full p-2 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
-                  aria-label="Cerrar calendario"
+                  aria-label={t('calendar.close')}
                 >
                   <X size={18} aria-hidden="true" />
                 </button>
@@ -217,7 +219,7 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                             : 'text-[var(--text-tertiary)]'
                         }`}
                       >
-                        {selectedDate ? formatShortDate(selectedDate) : 'Día'}
+                        {selectedDate ? formatShortDate(selectedDate) : t('calendar.day')}
                       </button>
                       <button
                         onClick={() => setActiveTab('upcoming')}
@@ -227,7 +229,7 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                             : 'text-[var(--text-tertiary)]'
                         }`}
                       >
-                        Exámenes
+                        {t('calendar.exams')}
                         {upcomingExams.length > 0 && (
                           <span className="ml-1.5 text-[10px] text-[var(--text-tertiary)]">
                             {upcomingExams.length}
@@ -248,11 +250,11 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                         >
                           {!selectedDate ? (
                             <p className="py-8 text-center text-[13px] text-[var(--text-tertiary)]">
-                              Selecciona un día en el calendario
+                              {t('calendar.selectDay')}
                             </p>
                           ) : selectedDateEvents.length === 0 ? (
                             <p className="py-8 text-center text-[13px] text-[var(--text-tertiary)]">
-                              Sin eventos para este día
+                              {t('calendar.noEvents')}
                             </p>
                           ) : (
                             <ul className="space-y-2">
@@ -287,7 +289,7 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                         >
                           {upcomingExams.length === 0 ? (
                             <p className="py-8 text-center text-[13px] text-[var(--text-tertiary)]">
-                              No hay exámenes próximos
+                              {t('calendar.noUpcoming')}
                             </p>
                           ) : (
                             <ul className="space-y-2">
@@ -344,10 +346,10 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAddEvent}
                   className="flex items-center gap-2 rounded-xl bg-[var(--text)] px-4 py-2.5 text-[13px] font-medium text-[var(--bg)]"
-                  aria-label="Añadir evento"
+                  aria-label={t('calendar.addEvent')}
                 >
                   <Plus size={16} />
-                  Añadir evento
+                  {t('calendar.addEvent')}
                 </motion.button>
               </div>
             </motion.div>
@@ -373,6 +375,7 @@ export function CalendarPanel({ isOpen, onClose, subjects = [] }) {
 
 // Event item component
 function EventItem({ event, subjects, onToggle, onEdit, onDelete, getEventTypeColor, getEventTypeLabel }) {
+  const { t } = useTranslation()
   const subject = subjects.find((s) => s.id === event.subjectId)
 
   return (
@@ -419,7 +422,7 @@ function EventItem({ event, subjects, onToggle, onEdit, onDelete, getEventTypeCo
           whileTap={{ scale: 0.9 }}
           onClick={onEdit}
           className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[var(--text-tertiary)] opacity-100 transition-all hover:bg-[var(--bg-secondary)] hover:text-[var(--text)] md:opacity-0 md:group-hover:opacity-100"
-          aria-label="Editar evento"
+          aria-label={t('eventForm.editEvent')}
         >
           <Pencil size={14} />
         </motion.button>
@@ -428,7 +431,7 @@ function EventItem({ event, subjects, onToggle, onEdit, onDelete, getEventTypeCo
           whileTap={{ scale: 0.9 }}
           onClick={onDelete}
           className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[var(--text-tertiary)] opacity-100 transition-all hover:bg-red-500/10 hover:text-red-500 md:opacity-0 md:group-hover:opacity-100"
-          aria-label="Eliminar evento"
+          aria-label={t('common.delete')}
         >
           <Trash2 size={14} />
         </motion.button>

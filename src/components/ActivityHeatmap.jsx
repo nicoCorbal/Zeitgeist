@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
 /**
  * Compact activity heatmap - shows last 16 weeks
  * Designed to fit nicely in the stats panel
  */
 
-const MONTHS_SHORT = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
+// Month abbreviations - J F M A M J J A S O N D
+const MONTHS_SHORT = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
 // Get intensity level (0-4) based on minutes studied
 function getIntensity(minutes) {
@@ -40,6 +42,7 @@ function getMonday(date) {
 }
 
 export function ActivityHeatmap({ sessions = [] }) {
+  const { t, i18n } = useTranslation()
   const [hoveredDay, setHoveredDay] = useState(null)
 
   // Process sessions into a map of date -> minutes
@@ -115,10 +118,10 @@ export function ActivityHeatmap({ sessions = [] }) {
       {/* Header with stats */}
       <div className="mb-3 flex items-baseline justify-between">
         <div className="text-[13px] text-[var(--text-secondary)]">
-          <span className="font-semibold text-[var(--text)]">{stats.totalDays}</span> días activos
+          <span className="font-semibold text-[var(--text)]">{stats.totalDays}</span> {t('stats.activeDays')}
           {stats.totalMinutes > 0 && (
             <span className="ml-2 text-[var(--text-tertiary)]">
-              · {Math.round(stats.totalMinutes / 60)}h total
+              · {Math.round(stats.totalMinutes / 60)}{t('stats.totalHours')}
             </span>
           )}
         </div>
@@ -179,10 +182,10 @@ export function ActivityHeatmap({ sessions = [] }) {
             <div className="text-[12px] font-medium text-[var(--bg)]">
               {hoveredDay.minutes > 0
                 ? `${hoveredDay.minutes} min`
-                : 'Sin actividad'}
+                : t('todos.empty')}
             </div>
             <div className="text-[10px] text-[var(--bg)]/60">
-              {new Date(hoveredDay.date).toLocaleDateString('es-ES', {
+              {new Date(hoveredDay.date).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', {
                 weekday: 'short',
                 day: 'numeric',
                 month: 'short',
@@ -197,10 +200,10 @@ export function ActivityHeatmap({ sessions = [] }) {
       {/* Legend */}
       <div className="mt-3 flex items-center justify-between">
         <div className="text-[10px] text-[var(--text-tertiary)]">
-          Últimas 16 semanas
+          {t('stats.last16Weeks')}
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-[10px] text-[var(--text-tertiary)]">Menos</span>
+          <span className="text-[10px] text-[var(--text-tertiary)]">{t('stats.less')}</span>
           {INTENSITY_COLORS.map((color, i) => (
             <div
               key={i}
@@ -208,7 +211,7 @@ export function ActivityHeatmap({ sessions = [] }) {
               style={{ backgroundColor: color }}
             />
           ))}
-          <span className="text-[10px] text-[var(--text-tertiary)]">Más</span>
+          <span className="text-[10px] text-[var(--text-tertiary)]">{t('stats.more')}</span>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { WifiOff, Wifi } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { DURATIONS, EASINGS } from '../utils/animations'
 import { useOnlineStatus } from '../hooks/useOnlineStatus'
 
@@ -8,6 +9,7 @@ import { useOnlineStatus } from '../hooks/useOnlineStatus'
  * Also shows a brief "back online" message when connectivity is restored
  */
 export function OfflineBanner() {
+  const { t } = useTranslation()
   const { isOffline, wasOffline } = useOnlineStatus()
 
   return (
@@ -33,12 +35,12 @@ export function OfflineBanner() {
             {isOffline ? (
               <>
                 <WifiOff size={14} aria-hidden="true" />
-                <span>Sin conexión - Los datos se guardan localmente</span>
+                <span>{t('offline.offline')}</span>
               </>
             ) : (
               <>
                 <Wifi size={14} aria-hidden="true" />
-                <span>Conexión restaurada</span>
+                <span>{t('offline.restored')}</span>
               </>
             )}
           </div>

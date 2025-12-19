@@ -1,0 +1,361 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "continue": "Continuar",
+    "skip": "Saltar",
+    "start": "Empezar",
+    "back": "Volver",
+    "today": "hoy",
+    "days": "días",
+    "hours": "horas",
+    "minutes": "minutos",
+    "completed": "completado",
+    "error": "Error"
+  },
+  "nav": {
+    "openApp": "Abrir app",
+    "openCalendar": "Abrir calendario",
+    "viewStats": "Ver estadísticas",
+    "openSettings": "Abrir ajustes"
+  },
+  "landing": {
+    "hero": {
+      "title1": "Tu tiempo de estudio,",
+      "title2": "más",
+      "title3": "denso",
+      "subtitle": "Temporizador minimalista para estudiantes. Sin distracciones, sin cuentas, sin complicaciones."
+    },
+    "values": {
+      "noSignup": "Sin registro",
+      "freeForever": "Gratis siempre",
+      "worksOffline": "Funciona offline"
+    },
+    "cta": {
+      "startNow": "Empezar ahora",
+      "seeHow": "Ver cómo funciona",
+      "startFree": "Comenzar gratis"
+    },
+    "features": {
+      "title": "Características",
+      "subtitle": "Minimalista y funcional",
+      "pomodoro": {
+        "title": "Pomodoro & Libre",
+        "description": "Dos modos para adaptarse a tu forma de estudiar. Descansos automáticos o control total."
+      },
+      "subjects": {
+        "title": "Materias",
+        "description": "Organiza tu tiempo por asignaturas. Configura duraciones personalizadas para cada una."
+      },
+      "calendar": {
+        "title": "Calendario",
+        "description": "Planifica exámenes y bloques de estudio. Cuenta atrás visual para tus fechas importantes."
+      },
+      "stats": {
+        "title": "Estadísticas",
+        "description": "Heatmap de actividad, rachas, horas totales. Visualiza tu progreso real."
+      },
+      "achievements": {
+        "title": "Logros",
+        "description": "18 logros desbloqueables. Pequeñas victorias que celebran tu constancia."
+      },
+      "themes": {
+        "title": "8 Temas",
+        "description": "Light, dark, gradientes. Encuentra el ambiente perfecto para concentrarte."
+      }
+    },
+    "finalCta": {
+      "title": "¿Listo para enfocarte?",
+      "subtitle": "Empieza en segundos. Sin registro, sin configuración."
+    },
+    "footer": {
+      "privacy": "Privacidad",
+      "madeFor": "Hecho para estudiantes"
+    }
+  },
+  "timer": {
+    "skipToTimer": "Saltar al temporizador",
+    "break": "break!",
+    "skipBreak": "saltar →",
+    "pomodoro": "Pomodoro",
+    "free": "Libre",
+    "pauseTimer": "Pausar temporizador",
+    "startTimer": "Iniciar temporizador",
+    "resetTimer": "Reiniciar temporizador",
+    "saveSession": "Guardar sesión"
+  },
+  "subjects": {
+    "title": "Asignaturas",
+    "general": "General",
+    "newSubject": "Nueva materia",
+    "editName": "Editar nombre",
+    "viewTasks": "Ver tareas",
+    "deleteConfirm": {
+      "title": "¿Eliminar asignatura?",
+      "message": "Se eliminará \"{{emoji}} {{name}}\" y todas sus tareas. Esta acción no se puede deshacer."
+    }
+  },
+  "todos": {
+    "title": "Tareas",
+    "newTask": "Nueva tarea...",
+    "completed": "Completadas",
+    "empty": "Sin tareas",
+    "noPending": "Sin tareas pendientes",
+    "more": "+{{count}} más"
+  },
+  "toast": {
+    "pomodoroComplete": "Pomodoro completado",
+    "breakComplete": "Descanso terminado",
+    "sessionSaved": "Sesión guardada"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "theme": "Tema",
+    "goals": "Metas",
+    "weeklyGoal": "Meta semanal",
+    "dailyGoal": "Meta diaria",
+    "sound": "Sonido",
+    "soundOn": "Activar sonido",
+    "soundOff": "Desactivar sonido",
+    "soundDescription": "Notificación sonora al terminar",
+    "deepFocus": "Deep Focus",
+    "deepFocusDescription": "Modo minimalista que oculta todo durante el focus",
+    "times": "Tiempos",
+    "focus": "Focus",
+    "break": "Descanso",
+    "longBreak": "Descanso largo",
+    "every": "Cada",
+    "never": "Nunca",
+    "emoji": "Emoji",
+    "shortcuts": {
+      "title": "Atajos de teclado",
+      "playPause": "Play / Pausa",
+      "reset": "Reiniciar",
+      "skipBreak": "Saltar break",
+      "space": "espacio"
+    },
+    "backup": {
+      "title": "Copia de seguridad",
+      "sessions": "Sesiones",
+      "total": "totales",
+      "save": "Guardar copia",
+      "restore": "Restaurar datos",
+      "restoreHint": "Carga una copia de seguridad anterior",
+      "confirmTitle": "¿Restaurar datos?",
+      "confirmMessage": "Esto reemplazará todos tus datos actuales. Perderás tus sesiones, materias y ajustes.",
+      "saveError": "Error al guardar",
+      "saveSuccess": "Copia guardada correctamente",
+      "restoreError": "Error al restaurar"
+    },
+    "version": "Denso v1.0",
+    "language": "Idioma",
+    "languages": {
+      "es": "Español",
+      "en": "English"
+    }
+  },
+  "stats": {
+    "title": "Estadísticas",
+    "today": "Hoy",
+    "streak": "Racha",
+    "thisWeek": "Esta semana",
+    "bySubject": "Por materia",
+    "recentSessions": "Sesiones recientes",
+    "achievements": "Logros",
+    "unlocked": "desbloqueados",
+    "activity": "Actividad",
+    "last16Weeks": "Últimas 16 semanas",
+    "less": "Menos",
+    "more": "Más",
+    "activeDays": "días activos",
+    "totalHours": "h total",
+    "studyTimeToday": "Tiempo de estudio hoy",
+    "currentStreak": "Racha actual",
+    "weeklyProgress": "Progreso semanal",
+    "achievementProgress": "Progreso de logros"
+  },
+  "calendar": {
+    "title": "Calendario",
+    "day": "Día",
+    "exams": "Exámenes",
+    "exam": "Examen",
+    "study": "Estudio",
+    "personal": "Personal",
+    "selectDay": "Selecciona un día en el calendario",
+    "noEvents": "Sin eventos para este día",
+    "noUpcoming": "No hay exámenes próximos",
+    "addEvent": "Añadir evento",
+    "tomorrow": "Mañana",
+    "past": "Pasado",
+    "close": "Cerrar calendario",
+    "prevMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "months": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+    "days": ["L", "M", "X", "J", "V", "S", "D"]
+  },
+  "eventForm": {
+    "editEvent": "Editar evento",
+    "newEvent": "Nuevo evento",
+    "title": "Título",
+    "date": "Fecha",
+    "startDate": "Inicio",
+    "endDate": "Fin",
+    "time": "Hora",
+    "duration": "Duración (minutos)",
+    "subject": "Asignatura",
+    "noSubject": "Sin asignatura",
+    "optional": "(opcional)",
+    "oneDay": "Un día",
+    "dateRange": "Rango de fechas",
+    "placeholders": {
+      "exam": "Ej: Examen de Matemáticas",
+      "personal": "Ej: Ver a mi novia",
+      "study": "Ej: Estudiar Tema 5"
+    },
+    "saveChanges": "Guardar cambios",
+    "addEvent": "Añadir evento",
+    "addEvents": "Añadir {{count}} eventos",
+    "willCreate": "Se crearán {{count}} eventos de estudio"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenido a Denso",
+      "subtitle": "Tu nuevo compañero de estudio"
+    },
+    "privacy": {
+      "title": "Tus datos son tuyos",
+      "subtitle": "Todo se guarda en tu navegador. Sin cuentas, sin servidores.",
+      "warning": "Si borras los datos del navegador, perderás tu progreso."
+    },
+    "exams": {
+      "title": "Planifica tus exámenes",
+      "subtitle": "Añade fechas importantes y organiza tu tiempo de estudio."
+    },
+    "goal": {
+      "title": "¿Cuántas horas por semana?",
+      "subtitle": "Establece una meta realista. Podrás cambiarla después."
+    },
+    "subject": {
+      "title": "Tu primera asignatura",
+      "subtitle": "Añade la materia en la que más necesitas enfocarte.",
+      "placeholder": "Nombre de la asignatura"
+    },
+    "skipTutorial": "Saltar tutorial"
+  },
+  "offline": {
+    "offline": "Sin conexión - Los datos se guardan localmente",
+    "restored": "Conexión restaurada"
+  },
+  "error": {
+    "title": "Algo salió mal",
+    "description": "Ha ocurrido un error inesperado. Intenta recargar la página.",
+    "retry": "Intentar de nuevo",
+    "reset": "Reiniciar aplicación",
+    "details": "Detalles del error"
+  },
+  "achievements": {
+    "unlocked": "Logro desbloqueado",
+    "first_session": {
+      "name": "Primera sesión",
+      "description": "Completa tu primera sesión de estudio"
+    },
+    "sessions_10": {
+      "name": "En racha",
+      "description": "Completa 10 sesiones de estudio"
+    },
+    "sessions_50": {
+      "name": "Dedicado",
+      "description": "Completa 50 sesiones de estudio"
+    },
+    "sessions_100": {
+      "name": "Centurión",
+      "description": "Completa 100 sesiones de estudio"
+    },
+    "sessions_500": {
+      "name": "Leyenda",
+      "description": "Completa 500 sesiones de estudio"
+    },
+    "streak_3": {
+      "name": "Constante",
+      "description": "Mantén una racha de 3 días"
+    },
+    "streak_7": {
+      "name": "Semana perfecta",
+      "description": "Mantén una racha de 7 días"
+    },
+    "streak_30": {
+      "name": "Imparable",
+      "description": "Mantén una racha de 30 días"
+    },
+    "streak_100": {
+      "name": "Máquina",
+      "description": "Mantén una racha de 100 días"
+    },
+    "hours_10": {
+      "name": "Maratonista",
+      "description": "Acumula 10 horas de estudio"
+    },
+    "hours_50": {
+      "name": "Estudioso",
+      "description": "Acumula 50 horas de estudio"
+    },
+    "hours_100": {
+      "name": "Centenario",
+      "description": "Acumula 100 horas de estudio"
+    },
+    "hours_500": {
+      "name": "Maestro",
+      "description": "Acumula 500 horas de estudio"
+    },
+    "hours_1000": {
+      "name": "Experto",
+      "description": "Acumula 1000 horas de estudio"
+    },
+    "early_bird": {
+      "name": "Madrugador",
+      "description": "Estudia antes de las 7:00 AM"
+    },
+    "night_owl": {
+      "name": "Noctámbulo",
+      "description": "Estudia después de las 11:00 PM"
+    },
+    "weekend_warrior": {
+      "name": "Guerrero de fin de semana",
+      "description": "Estudia un sábado y un domingo"
+    },
+    "long_session": {
+      "name": "Inmersión profunda",
+      "description": "Completa una sesión de 2+ horas"
+    },
+    "diverse": {
+      "name": "Versátil",
+      "description": "Estudia 5 asignaturas diferentes"
+    }
+  },
+  "sounds": {
+    "bell": "Campana",
+    "ding": "Ding",
+    "chime": "Chime",
+    "soft": "Suave",
+    "ping": "Ping",
+    "gentle": "Gentil"
+  },
+  "privacy": {
+    "title": "Privacidad",
+    "intro": "Tu privacidad es importante para nosotros.",
+    "localStorage": "Toda la información que generas al usar la aplicación (sesiones de estudio, materias, tareas, ajustes y preferencias) se guarda exclusivamente en el almacenamiento local de tu navegador (localStorage).",
+    "meaning": "Esto significa que:",
+    "points": [
+      "Tus datos de estudio nunca salen de tu dispositivo",
+      "No hay servidores que almacenen tu información personal",
+      "No hay cuentas de usuario ni registro",
+      "No compartimos tus datos de estudio con terceros"
+    ],
+    "analyticsTitle": "Analytics",
+    "analytics": "Utilizamos Google Analytics para entender cómo se usa la aplicación de forma agregada y anónima. Esto nos ayuda a mejorar Denso. Google Analytics puede recopilar información como tu ubicación aproximada, tipo de dispositivo y páginas visitadas. No recopilamos información sobre tus sesiones de estudio ni materias.",
+    "dataLoss": "Si borras los datos de tu navegador o usas otro dispositivo, empezarás de cero. Puedes exportar tus datos desde los ajustes de la aplicación si quieres hacer una copia de seguridad.",
+    "lastUpdate": "Última actualización: Diciembre 2024"
+  }
+}

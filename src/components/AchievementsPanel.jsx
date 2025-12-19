@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Lock, Rocket, Zap, Star, Trophy, Crown, Flame, Clock, Sun, Moon, Calendar, Target, Book } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import { DURATIONS, EASINGS } from '../utils/animations'
 
@@ -40,6 +41,7 @@ const itemVariants = {
 }
 
 function AchievementCard({ achievement }) {
+  const { t } = useTranslation()
   const Icon = ICONS[achievement.icon] || Star
   const isUnlocked = achievement.unlocked
 
@@ -71,7 +73,7 @@ function AchievementCard({ achievement }) {
           isUnlocked ? 'text-[var(--text)]' : 'text-[var(--text-tertiary)]'
         }`}
       >
-        {achievement.name}
+        {t(`achievements.${achievement.id}.name`)}
       </h3>
 
       {/* Description */}
@@ -80,7 +82,7 @@ function AchievementCard({ achievement }) {
           isUnlocked ? 'text-[var(--text-secondary)]' : 'text-[var(--text-tertiary)]'
         }`}
       >
-        {achievement.description}
+        {t(`achievements.${achievement.id}.description`)}
       </p>
 
       {/* Unlocked indicator */}
@@ -98,6 +100,7 @@ function AchievementCard({ achievement }) {
 }
 
 export function AchievementsPanel({ isOpen, onClose, achievements = [] }) {
+  const { t } = useTranslation()
   const titleId = useId()
   const panelRef = useFocusTrap(isOpen, onClose)
 
@@ -139,16 +142,16 @@ export function AchievementsPanel({ isOpen, onClose, achievements = [] }) {
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 id={titleId} className="text-lg font-semibold text-[var(--text)]">
-                  Logros
+                  {t('stats.achievements')}
                 </h2>
                 <p className="text-[13px] text-[var(--text-tertiary)]">
-                  {unlockedCount} de {totalCount} desbloqueados
+                  {unlockedCount} / {totalCount} {t('stats.unlocked')}
                 </p>
               </div>
               <button
                 onClick={onClose}
                 className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
-                aria-label="Cerrar panel de logros"
+                aria-label={t('common.close')}
               >
                 <X size={18} aria-hidden="true" />
               </button>
@@ -162,7 +165,7 @@ export function AchievementsPanel({ isOpen, onClose, achievements = [] }) {
                 aria-valuenow={unlockedCount}
                 aria-valuemin={0}
                 aria-valuemax={totalCount}
-                aria-label="Progreso de logros"
+                aria-label={t('stats.achievementProgress')}
               >
                 <motion.div
                   className="h-full rounded-full bg-[var(--text)]"

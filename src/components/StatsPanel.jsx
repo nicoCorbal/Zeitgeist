@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Clock, Flame, Target, TrendingUp, Award, Calendar } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { formatDuration } from '../utils/time'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import { DURATIONS, EASINGS } from '../utils/animations'
@@ -29,11 +30,12 @@ const itemVariants = {
 }
 
 export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessions = [] }) {
+  const { t } = useTranslation()
   const titleId = useId()
   const panelRef = useFocusTrap(isOpen, onClose)
   const [showAchievements, setShowAchievements] = useState(false)
 
-  const getSubjectName = (id) => subjects.find((s) => s.id === id)?.name || 'General'
+  const getSubjectName = (id) => subjects.find((s) => s.id === id)?.name || t('subjects.general')
   const getSubjectEmoji = (id) => subjects.find((s) => s.id === id)?.emoji || null
 
   // Get achievements progress
@@ -82,7 +84,7 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                 id={titleId}
                 className="text-[15px] font-semibold tracking-[-0.01em] text-[var(--text)]"
               >
-                Estadísticas
+                {t('stats.title')}
               </h2>
               <motion.button
                 data-close-button
@@ -90,7 +92,7 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                 whileTap={{ scale: 0.95 }}
                 onClick={onClose}
                 className="rounded-full p-2 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
-                aria-label="Cerrar estadísticas"
+                aria-label={t('common.close')}
               >
                 <X size={18} aria-hidden="true" />
               </motion.button>
@@ -108,12 +110,12 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                 <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
                   <article
                     className="rounded-xl border border-[var(--border)] p-4 transition-colors hover:border-[var(--text-tertiary)]"
-                    aria-label={`Tiempo de estudio hoy: ${formatDuration(stats.todayTotal)}`}
+                    aria-label={`${t('stats.studyTimeToday')}: ${formatDuration(stats.todayTotal)}`}
                   >
                     <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                       <Clock size={12} aria-hidden="true" />
                       <span className="text-[10px] font-semibold uppercase tracking-widest">
-                        Hoy
+                        {t('stats.today')}
                       </span>
                     </div>
                     <p className="mt-2 text-xl font-semibold tracking-tight text-[var(--text)]">
@@ -123,16 +125,16 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
 
                   <article
                     className="rounded-xl border border-[var(--border)] p-4 transition-colors hover:border-[var(--text-tertiary)]"
-                    aria-label={`Racha actual: ${stats.streak} días consecutivos`}
+                    aria-label={`${t('stats.currentStreak')}: ${stats.streak} ${t('common.days')}`}
                   >
                     <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                       <Flame size={12} aria-hidden="true" />
                       <span className="text-[10px] font-semibold uppercase tracking-widest">
-                        Racha
+                        {t('stats.streak')}
                       </span>
                     </div>
                     <p className="mt-2 text-xl font-semibold tracking-tight text-[var(--text)]">
-                      {stats.streak} días
+                      {stats.streak} {t('common.days')}
                     </p>
                   </article>
                 </motion.div>
@@ -142,7 +144,7 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                     <Target size={12} aria-hidden="true" />
                     <span id="weekly-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                      Esta semana
+                      {t('stats.thisWeek')}
                     </span>
                   </div>
                   <div className="mt-3">
@@ -160,7 +162,7 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                       aria-valuenow={Math.round(stats.weeklyProgress * 100)}
                       aria-valuemin={0}
                       aria-valuemax={100}
-                      aria-label="Progreso semanal"
+                      aria-label={t('stats.weeklyProgress')}
                     >
                       <motion.div
                         className="h-full rounded-full bg-[var(--text)]"
@@ -170,7 +172,7 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                       />
                     </div>
                     <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">
-                      {Math.round(stats.weeklyProgress * 100)}% completado
+                      {Math.round(stats.weeklyProgress * 100)}% {t('common.completed')}
                     </p>
                   </div>
                 </motion.section>
@@ -181,10 +183,10 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                     <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                       <TrendingUp size={12} aria-hidden="true" />
                       <span id="subjects-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                        Por materia
+                        {t('stats.bySubject')}
                       </span>
                     </div>
-                    <ul className="mt-3 space-y-3" aria-label="Tiempo por materia esta semana">
+                    <ul className="mt-3 space-y-3" aria-label={t('stats.bySubject')}>
                       {Object.entries(stats.subjectTime)
                         .sort(([, a], [, b]) => b - a)
                         .map(([subjectId, time], index) => {
@@ -239,9 +241,9 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                         <Award size={20} className="text-[var(--bg)]" aria-hidden="true" />
                       </div>
                       <div>
-                        <div className="text-[13px] font-semibold text-[var(--text)]">Logros</div>
+                        <div className="text-[13px] font-semibold text-[var(--text)]">{t('stats.achievements')}</div>
                         <div className="text-[12px] text-[var(--text-tertiary)]">
-                          {unlockedCount} de {achievements.length} desbloqueados
+                          {unlockedCount} / {achievements.length} {t('stats.unlocked')}
                         </div>
                       </div>
                     </div>
@@ -264,7 +266,7 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                     <Calendar size={12} aria-hidden="true" />
                     <span id="heatmap-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                      Actividad
+                      {t('stats.activity')}
                     </span>
                   </div>
                   <div className="mt-3">
@@ -276,9 +278,9 @@ export function StatsPanel({ isOpen, onClose, stats, subjects, weeklyGoal, sessi
                 {stats.recentSessions.length > 0 && (
                   <motion.section variants={itemVariants} aria-labelledby="recent-section">
                     <span id="recent-section" className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-secondary)]">
-                      Sesiones recientes
+                      {t('stats.recentSessions')}
                     </span>
-                    <ul className="mt-3 space-y-1" aria-label="Últimas sesiones de estudio">
+                    <ul className="mt-3 space-y-1" aria-label={t('stats.recentSessions')}>
                       {stats.recentSessions.slice(0, 5).map((session, index) => (
                         <motion.li
                           key={session.id}

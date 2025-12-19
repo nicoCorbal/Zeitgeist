@@ -5,7 +5,6 @@
 export const SOUNDS = [
   {
     id: 'bell',
-    name: 'Campana',
     frequency: 830,
     type: 'sine',
     harmonics: [1, 0.5, 0.25], // Overtones for richer sound
@@ -13,7 +12,6 @@ export const SOUNDS = [
   },
   {
     id: 'ding',
-    name: 'Ding',
     frequency: 1200,
     type: 'sine',
     harmonics: [1, 0.3],
@@ -21,7 +19,6 @@ export const SOUNDS = [
   },
   {
     id: 'chime',
-    name: 'Chime',
     frequency: 660,
     type: 'triangle',
     harmonics: [1, 0.6, 0.3, 0.15],
@@ -29,7 +26,6 @@ export const SOUNDS = [
   },
   {
     id: 'soft',
-    name: 'Suave',
     frequency: 440,
     type: 'sine',
     harmonics: [1, 0.2],
@@ -37,7 +33,6 @@ export const SOUNDS = [
   },
   {
     id: 'ping',
-    name: 'Ping',
     frequency: 1000,
     type: 'sine', // Changed from square for less harsh sound
     harmonics: [1],
@@ -45,7 +40,6 @@ export const SOUNDS = [
   },
   {
     id: 'gentle',
-    name: 'Gentil',
     frequency: 528, // "Healing" frequency
     type: 'sine',
     harmonics: [1, 0.4, 0.2],

@@ -1,63 +1,35 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Clock, Target, BookOpen, ChevronRight, Check, Shield, Calendar } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { DURATIONS, EASINGS } from '../utils/animations'
 import { EMOJIS } from '../data/emojis'
 
-const STEPS = [
-  {
-    id: 'welcome',
-    icon: Clock,
-    title: 'Bienvenido a Denso',
-    description: 'Temporizador, calendario y estadísticas de estudio. Todo en un solo lugar, sin complicaciones.',
-  },
-  {
-    id: 'data',
-    icon: Shield,
-    title: 'Tus datos son tuyos',
-    description: 'Todo se guarda en tu dispositivo, no en la nube. Desde ajustes puedes descargar un archivo con tus datos y subirlo en otro dispositivo o navegador.',
-    warning: 'Si borras los datos del navegador o cambias de dispositivo sin copia, perderás tu progreso.',
-  },
-  {
-    id: 'calendar',
-    icon: Calendar,
-    title: 'Planifica tus exámenes',
-    description: 'Añade exámenes y bloques de estudio al calendario. Verás una cuenta atrás visual para no perder de vista tus fechas importantes.',
-  },
-  {
-    id: 'goal',
-    icon: Target,
-    title: '¿Cuántas horas por semana?',
-    description: 'Establece una meta realista. Puedes cambiarla cuando quieras.',
-    hasInput: true,
-    inputType: 'goal',
-  },
-  {
-    id: 'subject',
-    icon: BookOpen,
-    title: 'Tu primera asignatura',
-    description: 'Organiza tu tiempo por materias. Añade más después.',
-    hasInput: true,
-    inputType: 'subject',
-  },
+const STEP_CONFIG = [
+  { id: 'welcome', icon: Clock, key: 'welcome' },
+  { id: 'data', icon: Shield, key: 'privacy', hasWarning: true },
+  { id: 'calendar', icon: Calendar, key: 'exams' },
+  { id: 'goal', icon: Target, key: 'goal', hasInput: true, inputType: 'goal' },
+  { id: 'subject', icon: BookOpen, key: 'subject', hasInput: true, inputType: 'subject' },
 ]
 
 export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
+  const { t } = useTranslation()
   const [currentStep, setCurrentStep] = useState(0)
   const [goalHours, setGoalHours] = useState(15)
   const [subjectName, setSubjectName] = useState('')
   const [subjectEmoji, setSubjectEmoji] = useState('📚')
 
-  const step = STEPS[currentStep]
-  const isLastStep = currentStep === STEPS.length - 1
-  const Icon = step.icon
+  const stepConfig = STEP_CONFIG[currentStep]
+  const isLastStep = currentStep === STEP_CONFIG.length - 1
+  const Icon = stepConfig.icon
 
   const handleNext = () => {
-    if (step.inputType === 'goal') {
+    if (stepConfig.inputType === 'goal') {
       onGoalChange(goalHours * 3600)
     }
 
-    if (step.inputType === 'subject' && subjectName.trim()) {
+    if (stepConfig.inputType === 'subject' && subjectName.trim()) {
       onAddSubject(subjectName.trim(), subjectEmoji)
     }
 
@@ -69,7 +41,7 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
   }
 
   const canProceed = () => {
-    if (step.inputType === 'subject') {
+    if (stepConfig.inputType === 'subject') {
       return subjectName.trim().length > 0
     }
     return true
@@ -92,7 +64,7 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
         <div className="w-full max-w-sm">
         {/* Progress dots */}
         <div className="mb-8 flex justify-center gap-2">
-          {STEPS.map((_, i) => (
+          {STEP_CONFIG.map((_, i) => (
             <motion.div
               key={i}
               className={`h-1.5 rounded-full transition-all ${
@@ -111,7 +83,7 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
         {/* Step content */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={step.id}
+            key={stepConfig.id}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
@@ -130,25 +102,25 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
 
             {/* Title */}
             <h1 className="mb-2 text-xl font-semibold text-[var(--text)]">
-              {step.title}
+              {t(`onboarding.${stepConfig.key}.title`)}
             </h1>
 
             {/* Description */}
             <p className="text-[14px] text-[var(--text-secondary)]">
-              {step.description}
+              {t(`onboarding.${stepConfig.key}.subtitle`)}
             </p>
 
             {/* Warning */}
-            {step.warning && (
+            {stepConfig.hasWarning && (
               <p className="mt-3 text-[12px] text-[var(--text-tertiary)]">
-                ⚠️ {step.warning}
+                ⚠️ {t(`onboarding.${stepConfig.key}.warning`)}
               </p>
             )}
 
             <div className="mb-8" />
 
             {/* Goal input */}
-            {step.inputType === 'goal' && (
+            {stepConfig.inputType === 'goal' && (
               <div className="mb-8">
                 <div className="flex items-center justify-center gap-4">
                   <button
@@ -169,13 +141,13 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
                   </button>
                 </div>
                 <p className="mt-3 text-[12px] text-[var(--text-tertiary)]">
-                  ~{Math.round(goalHours / 7 * 10) / 10}h por día
+                  ~{Math.round(goalHours / 7 * 10) / 10}h/{t('common.days').charAt(0)}
                 </p>
               </div>
             )}
 
             {/* Subject input */}
-            {step.inputType === 'subject' && (
+            {stepConfig.inputType === 'subject' && (
               <div className="mb-8 space-y-4">
                 {/* Emoji picker */}
                 <div className="max-h-32 overflow-y-auto rounded-lg bg-[var(--bg-secondary)] p-2">
@@ -201,7 +173,7 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
                   type="text"
                   value={subjectName}
                   onChange={(e) => setSubjectName(e.target.value)}
-                  placeholder="Nombre de la asignatura"
+                  placeholder={t('onboarding.subject.placeholder')}
                   className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-center text-[15px] text-[var(--text)] outline-none transition-colors focus:border-[var(--text)]"
                   autoFocus
                 />
@@ -225,12 +197,12 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
           >
             {isLastStep ? (
               <>
-                Empezar
+                {t('common.start')}
                 <Check size={18} />
               </>
             ) : (
               <>
-                Continuar
+                {t('common.continue')}
                 <ChevronRight size={18} />
               </>
             )}
@@ -241,7 +213,7 @@ export function Onboarding({ onComplete, onGoalChange, onAddSubject }) {
               onClick={onComplete}
               className="text-[13px] text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]"
             >
-              Saltar tutorial
+              {t('onboarding.skipTutorial')}
             </button>
           )}
         </div>

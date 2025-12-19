@@ -13,6 +13,7 @@ import {
   Target,
   Book,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { DURATIONS, EASINGS } from '../utils/animations'
 
 const ICONS = {
@@ -31,6 +32,8 @@ const ICONS = {
 }
 
 export function AchievementToast({ achievement, isVisible, onComplete }) {
+  const { t } = useTranslation()
+
   if (!achievement) return null
 
   const Icon = ICONS[achievement.icon] || Star
@@ -87,7 +90,7 @@ export function AchievementToast({ achievement, isVisible, onComplete }) {
                 transition={{ delay: 0.15 }}
                 className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]"
               >
-                Logro desbloqueado
+                {t('achievements.unlocked')}
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
@@ -95,7 +98,7 @@ export function AchievementToast({ achievement, isVisible, onComplete }) {
                 transition={{ delay: 0.2 }}
                 className="text-[14px] font-semibold text-[var(--text)]"
               >
-                {achievement.name}
+                {t(`achievements.${achievement.id}.name`)}
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
@@ -103,7 +106,7 @@ export function AchievementToast({ achievement, isVisible, onComplete }) {
                 transition={{ delay: 0.25 }}
                 className="text-[12px] text-[var(--text-secondary)]"
               >
-                {achievement.description}
+                {t(`achievements.${achievement.id}.description`)}
               </motion.div>
             </div>
           </motion.div>

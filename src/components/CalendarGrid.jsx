@@ -1,12 +1,7 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-
-const DAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
-const MONTHS = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-]
+import { useTranslation } from 'react-i18next'
 
 const getDateKey = (date) => {
   const year = date.getFullYear()
@@ -24,7 +19,12 @@ export function CalendarGrid({
   onPrevMonth,
   onNextMonth,
 }) {
+  const { t } = useTranslation()
   const today = getDateKey(new Date())
+
+  // Get translated days and months from translation file
+  const DAYS = t('calendar.days', { returnObjects: true })
+  const MONTHS = t('calendar.months', { returnObjects: true })
 
   const days = useMemo(() => {
     const firstDay = new Date(year, month, 1)
@@ -67,13 +67,13 @@ export function CalendarGrid({
           whileTap={{ scale: 0.9 }}
           onClick={onPrevMonth}
           className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
-          aria-label="Mes anterior"
+          aria-label={t('calendar.prevMonth')}
         >
           <ChevronLeft size={18} />
         </motion.button>
 
         <h3 className="text-[14px] font-semibold tracking-[-0.01em] text-[var(--text)]">
-          {MONTHS[month]} {year}
+          {Array.isArray(MONTHS) ? MONTHS[month] : ''} {year}
         </h3>
 
         <motion.button
@@ -81,7 +81,7 @@ export function CalendarGrid({
           whileTap={{ scale: 0.9 }}
           onClick={onNextMonth}
           className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
-          aria-label="Mes siguiente"
+          aria-label={t('calendar.nextMonth')}
         >
           <ChevronRight size={18} />
         </motion.button>
@@ -89,9 +89,9 @@ export function CalendarGrid({
 
       {/* Days of week */}
       <div className="mb-2 grid grid-cols-7 gap-1">
-        {DAYS.map((day) => (
+        {Array.isArray(DAYS) && DAYS.map((day, idx) => (
           <div
-            key={day}
+            key={idx}
             className="text-center text-[10px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]"
           >
             {day}
@@ -154,15 +154,15 @@ export function CalendarGrid({
       <div className="mt-4 flex items-center justify-center gap-4 border-t border-[var(--border)] pt-3">
         <div className="flex items-center gap-1.5 text-[10px] text-[var(--text-tertiary)]">
           <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-          <span>Examen</span>
+          <span>{t('calendar.exam')}</span>
         </div>
         <div className="flex items-center gap-1.5 text-[10px] text-[var(--text-tertiary)]">
           <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-          <span>Estudio</span>
+          <span>{t('calendar.study')}</span>
         </div>
         <div className="flex items-center gap-1.5 text-[10px] text-[var(--text-tertiary)]">
           <div className="h-1.5 w-1.5 rounded-full bg-pink-500" />
-          <span>Personal</span>
+          <span>{t('calendar.personal')}</span>
         </div>
       </div>
     </div>

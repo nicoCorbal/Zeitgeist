@@ -2,44 +2,22 @@ import { useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
 import { Play, Target, Palette, WifiOff, Sun, Moon, ArrowRight, Timer, BarChart3, Trophy, Check, Calendar } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '../hooks/useTheme'
 
-const features = [
-  {
-    icon: Timer,
-    title: 'Pomodoro & Libre',
-    description: 'Dos modos para adaptarse a tu forma de estudiar. Descansos automáticos o control total.',
-  },
-  {
-    icon: Target,
-    title: 'Materias',
-    description: 'Organiza tu tiempo por asignaturas. Configura duraciones personalizadas para cada una.',
-  },
-  {
-    icon: Calendar,
-    title: 'Calendario',
-    description: 'Planifica exámenes y bloques de estudio. Cuenta atrás visual para tus fechas importantes.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Estadísticas',
-    description: 'Heatmap de actividad, rachas, horas totales. Visualiza tu progreso real.',
-  },
-  {
-    icon: Trophy,
-    title: 'Logros',
-    description: '18 logros desbloqueables. Pequeñas victorias que celebran tu constancia.',
-  },
-  {
-    icon: Palette,
-    title: '8 Temas',
-    description: 'Light, dark, gradientes. Encuentra el ambiente perfecto para concentrarte.',
-  },
+const featureKeys = [
+  { icon: Timer, key: 'pomodoro' },
+  { icon: Target, key: 'subjects' },
+  { icon: Calendar, key: 'calendar' },
+  { icon: BarChart3, key: 'stats' },
+  { icon: Trophy, key: 'achievements' },
+  { icon: Palette, key: 'themes' },
 ]
 
 function FeatureCard({ feature, index }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const { t } = useTranslation()
 
   return (
     <motion.div
@@ -59,10 +37,10 @@ function FeatureCard({ feature, index }) {
             className="text-[var(--text)] opacity-80 transition-opacity group-hover:opacity-100"
           />
           <h3 className="mt-5 text-[17px] font-semibold text-[var(--text)]">
-            {feature.title}
+            {t(`landing.features.${feature.key}.title`)}
           </h3>
           <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-tertiary)]">
-            {feature.description}
+            {t(`landing.features.${feature.key}.description`)}
           </p>
         </div>
       </motion.div>
@@ -72,6 +50,7 @@ function FeatureCard({ feature, index }) {
 
 export function Landing({ onEnterApp }) {
   const { theme, setTheme, isDark } = useTheme()
+  const { t } = useTranslation()
 
   // Force dark theme on landing, restore original on unmount
   useEffect(() => {
@@ -132,7 +111,7 @@ export function Landing({ onEnterApp }) {
               whileTap={{ scale: 0.98 }}
               className="hidden sm:flex items-center gap-2 rounded-full bg-[var(--text)] px-4 py-2 text-[13px] font-medium text-[var(--bg)]"
             >
-              Abrir app
+              {t('nav.openApp')}
               <ArrowRight size={14} />
             </motion.button>
           </div>
@@ -149,9 +128,9 @@ export function Landing({ onEnterApp }) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-[clamp(3rem,10vw,5.5rem)] font-bold leading-[1.05] tracking-tight text-[var(--text)]"
           >
-            Tu tiempo de estudio,
+            {t('landing.hero.title1')}
             <br />
-            <span className="text-[var(--text-secondary)]">más <em className="italic">denso</em></span>
+            <span className="text-[var(--text-secondary)]">{t('landing.hero.title2')} <em className="italic">{t('landing.hero.title3')}</em></span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -161,7 +140,7 @@ export function Landing({ onEnterApp }) {
             transition={{ delay: 0.4 }}
             className="mx-auto mt-8 max-w-lg text-[18px] leading-relaxed text-[var(--text-tertiary)]"
           >
-            Temporizador minimalista para estudiantes. Sin distracciones, sin cuentas, sin complicaciones.
+            {t('landing.hero.subtitle')}
           </motion.p>
 
           {/* Value points */}
@@ -171,7 +150,7 @@ export function Landing({ onEnterApp }) {
             transition={{ delay: 0.5 }}
             className="mt-8 flex flex-wrap items-center justify-center gap-4 text-[14px]"
           >
-            {['Sin registro', 'Gratis siempre', 'Funciona offline'].map((text) => (
+            {[t('landing.values.noSignup'), t('landing.values.freeForever'), t('landing.values.worksOffline')].map((text) => (
               <span key={text} className="flex items-center gap-1.5 text-[var(--text-secondary)]">
                 <Check size={14} strokeWidth={2.5} className="text-[var(--text-secondary)]" />
                 {text}
@@ -193,7 +172,7 @@ export function Landing({ onEnterApp }) {
               className="flex items-center gap-2.5 rounded-full bg-[var(--text)] px-8 py-4 text-[16px] font-medium text-[var(--bg)] shadow-lg shadow-[var(--text)]/10"
             >
               <Play size={18} fill="currentColor" />
-              Empezar ahora
+              {t('landing.cta.startNow')}
             </motion.button>
 
             <motion.button
@@ -203,7 +182,7 @@ export function Landing({ onEnterApp }) {
               className="flex items-center gap-2 rounded-full border border-[var(--border)] px-6 py-3.5 text-[15px] text-[var(--text-secondary)] transition-colors hover:border-[var(--text-tertiary)] hover:text-[var(--text)]"
             >
               <ArrowRight size={16} className="-ml-1 rotate-90" />
-              Ver cómo funciona
+              {t('landing.cta.seeHow')}
             </motion.button>
           </motion.div>
         </div>
@@ -260,16 +239,16 @@ export function Landing({ onEnterApp }) {
             className="text-center"
           >
             <h2 className="text-[13px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-              Características
+              {t('landing.features.title')}
             </h2>
             <p className="mt-4 text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text)]">
-              Minimalista y funcional
+              {t('landing.features.subtitle')}
             </p>
           </motion.div>
 
           <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, index) => (
-              <FeatureCard key={feature.title} feature={feature} index={index} />
+            {featureKeys.map((feature, index) => (
+              <FeatureCard key={feature.key} feature={feature} index={index} />
             ))}
           </div>
         </div>
@@ -284,10 +263,10 @@ export function Landing({ onEnterApp }) {
           className="mx-auto max-w-2xl text-center"
         >
           <h2 className="text-[clamp(1.75rem,5vw,3rem)] font-bold text-[var(--text)]">
-            ¿Listo para enfocarte?
+            {t('landing.finalCta.title')}
           </h2>
           <p className="mt-4 text-[17px] text-[var(--text-tertiary)]">
-            Empieza en segundos. Sin registro, sin configuración.
+            {t('landing.finalCta.subtitle')}
           </p>
 
           <motion.button
@@ -296,7 +275,7 @@ export function Landing({ onEnterApp }) {
             whileTap={{ scale: 0.98 }}
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--text)] px-8 py-4 text-[15px] font-medium text-[var(--bg)]"
           >
-            Comenzar gratis
+            {t('landing.cta.startFree')}
             <ArrowRight size={16} />
           </motion.button>
         </motion.div>
@@ -316,9 +295,9 @@ export function Landing({ onEnterApp }) {
           </div>
           <div className="flex items-center gap-4">
             <Link to="/privacy" className="transition-colors hover:text-[var(--text-secondary)]">
-              Privacidad
+              {t('landing.footer.privacy')}
             </Link>
-            <span className="hidden sm:inline">Hecho para estudiantes</span>
+            <span className="hidden sm:inline">{t('landing.footer.madeFor')}</span>
           </div>
         </div>
       </footer>

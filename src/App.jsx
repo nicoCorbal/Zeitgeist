@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Play, Pause, Plus, X, Settings, RotateCcw, Check, ArrowLeft, BarChart2, Trash2, CheckSquare, Pencil, Calendar } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStats } from './hooks/useStats'
 import { useTimer } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
@@ -76,6 +77,7 @@ function AnimatedTime({ time }) {
 }
 
 function TimerApp() {
+  const { t } = useTranslation()
   const [showSubjects, setShowSubjects] = useState(false)
   const [newSubject, setNewSubject] = useState('')
   const [newSubjectEmoji, setNewSubjectEmoji] = useState(null)
@@ -133,10 +135,10 @@ function TimerApp() {
       haptics.success()
       celebration.celebrate()
       addSession(duration || workDuration)
-      showToast('Pomodoro completado')
+      showToast(t('toast.pomodoroComplete'))
     } else {
       haptics.medium()
-      showToast('Descanso terminado')
+      showToast(t('toast.breakComplete'))
     }
   }, [notify, soundEnabled, soundType, showToast, haptics, workDuration, celebration, addSession])
 
@@ -193,7 +195,7 @@ function TimerApp() {
       celebration.celebrate()
       timer.completeSession(timer.elapsedTime)
       timer.reset()
-      showToast('Sesión guardada')
+      showToast(t('toast.sessionSaved'))
     }
   }
 
@@ -240,7 +242,7 @@ function TimerApp() {
     <div className="flex h-[100dvh] flex-col overflow-hidden bg-[var(--bg-app)] text-[var(--text)] transition-colors duration-500">
       {/* Skip link for keyboard users */}
       <a href="#main-timer" className="skip-link">
-        Saltar al temporizador
+        {t('timer.skipToTimer')}
       </a>
 
       {/* Header */}
@@ -263,21 +265,21 @@ function TimerApp() {
           <button
             onClick={(e) => { e.currentTarget.blur(); setShowCalendar(true) }}
             className="p-2 text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
-            aria-label="Abrir calendario"
+            aria-label={t('nav.openCalendar')}
           >
             <Calendar size={18} strokeWidth={1.5} aria-hidden="true" />
           </button>
           <button
             onClick={(e) => { e.currentTarget.blur(); setShowStats(true) }}
             className="p-2 text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
-            aria-label="Ver estadísticas"
+            aria-label={t('nav.viewStats')}
           >
             <BarChart2 size={18} strokeWidth={1.5} aria-hidden="true" />
           </button>
           <button
             onClick={(e) => { e.currentTarget.blur(); setShowSettings(true) }}
             className="p-2 text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
-            aria-label="Abrir ajustes"
+            aria-label={t('nav.openSettings')}
           >
             <Settings size={18} strokeWidth={1.5} aria-hidden="true" />
           </button>
@@ -307,7 +309,7 @@ function TimerApp() {
               className="flex items-center gap-2 text-[15px] font-normal text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
             >
               {current?.emoji && <span>{current.emoji}</span>}
-              {current?.name || 'General'}
+              {current?.name || t('subjects.general')}
               <ChevronDown size={14} className={`transition-transform ${showSubjects ? 'rotate-180' : ''}`} />
             </button>
 
@@ -336,7 +338,7 @@ function TimerApp() {
                           </span>
                         </div>
                         <div className="max-h-64 overflow-y-auto p-1">
-                          {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(t => !t.completed).map((todo) => (
+                          {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(task => !task.completed).map((todo) => (
                             <button
                               key={todo.id}
                               onClick={() => toggleTodo(viewingTodosFor, todo.id)}
@@ -346,12 +348,12 @@ function TimerApp() {
                               <span className="text-[13px] text-[var(--text)]">{todo.text}</span>
                             </button>
                           ))}
-                          {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(t => t.completed).length > 0 && (
+                          {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(task => task.completed).length > 0 && (
                             <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
-                              Completadas
+                              {t('todos.completed')}
                             </div>
                           )}
-                          {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(t => t.completed).map((todo) => (
+                          {subjects.find(s => s.id === viewingTodosFor)?.todos?.filter(task => task.completed).map((todo) => (
                             <div
                               key={todo.id}
                               className="group flex w-full items-center gap-3 rounded-md px-2 py-1.5 transition-colors hover:bg-[var(--bg-secondary)]"
@@ -372,7 +374,7 @@ function TimerApp() {
                             </div>
                           ))}
                           {(!subjects.find(s => s.id === viewingTodosFor)?.todos || subjects.find(s => s.id === viewingTodosFor)?.todos.length === 0) && (
-                            <p className="px-2 py-4 text-center text-[12px] text-[var(--text-tertiary)]">Sin tareas</p>
+                            <p className="px-2 py-4 text-center text-[12px] text-[var(--text-tertiary)]">{t('todos.empty')}</p>
                           )}
                         </div>
                         <div className="border-t border-[var(--border)] p-2">
@@ -391,7 +393,7 @@ function TimerApp() {
                               value={newTodoText}
                               onChange={(e) => setNewTodoText(e.target.value)}
                               onKeyDown={(e) => e.stopPropagation()}
-                              placeholder="Nueva tarea..."
+                              placeholder={t('todos.newTask')}
                               className="flex-1 rounded-md border border-[var(--border)] bg-transparent px-2.5 py-1.5 text-[13px] text-[var(--text)] outline-none focus:border-[var(--text-tertiary)] placeholder:text-[var(--text-tertiary)]"
                             />
                             <button
@@ -461,7 +463,7 @@ function TimerApp() {
                                     setEditingName(s.name)
                                   }}
                                   className="p-1 text-[var(--text-tertiary)] opacity-100 transition-opacity hover:text-[var(--text)] md:opacity-0 md:group-hover:opacity-100"
-                                  title="Editar nombre"
+                                  title={t('subjects.editName')}
                                 >
                                   <Pencil size={14} />
                                 </button>
@@ -482,7 +484,7 @@ function TimerApp() {
                                     setViewingTodosFor(s.id)
                                   }}
                                   className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text)]"
-                                  title="Ver tareas"
+                                  title={t('subjects.viewTasks')}
                                 >
                                   <CheckSquare size={14} />
                                 </button>
@@ -538,7 +540,7 @@ function TimerApp() {
                             style={{ width: 'calc(100% - 8px)' }}
                           >
                             <Plus size={14} />
-                            Nueva materia
+                            {t('subjects.newSubject')}
                           </button>
                         )}
                       </div>
@@ -560,7 +562,7 @@ function TimerApp() {
                   transition={{ duration: 0.3 }}
                   className="mb-2 text-[13px] font-medium tracking-wide text-[var(--text-tertiary)]"
                 >
-                  break!
+                  {t('timer.break')}
                 </motion.span>
               )}
             </AnimatePresence>
@@ -576,7 +578,7 @@ function TimerApp() {
                     : 'min(140px, 22vw)'
               }}
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-              aria-label={`${timer.isRunning ? 'Pausar' : 'Iniciar'} temporizador. Tiempo: ${formatTime(timer.displayTime)}`}
+              aria-label={`${timer.isRunning ? t('timer.pauseTimer') : t('timer.startTimer')}. ${formatTime(timer.displayTime)}`}
               aria-live="polite"
             >
               <AnimatedTime time={timer.displayTime} />
@@ -590,9 +592,9 @@ function TimerApp() {
                   transition={{ duration: 0.3, delay: 0.1 }}
                   onClick={timer.skipBreak}
                   className="mt-4 text-[12px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors"
-                  aria-label="Saltar descanso e iniciar nueva sesión"
+                  aria-label={t('timer.skipBreak')}
                 >
-                  saltar →
+                  {t('timer.skipBreak')}
                 </motion.button>
               )}
             </AnimatePresence>
@@ -617,7 +619,7 @@ function TimerApp() {
             <button
               onClick={handleReset}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-secondary)] transition-colors hover:border-[var(--text-tertiary)] hover:text-[var(--text)]"
-              aria-label="Reiniciar temporizador"
+              aria-label={t('timer.resetTimer')}
             >
               <RotateCcw size={18} strokeWidth={1.5} aria-hidden="true" />
             </button>
@@ -626,7 +628,7 @@ function TimerApp() {
               whileTap={{ scale: 0.96 }}
               onClick={handleToggle}
               className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--text)] text-[var(--bg)]"
-              aria-label={timer.isRunning ? 'Pausar temporizador' : 'Iniciar temporizador'}
+              aria-label={timer.isRunning ? t('timer.pauseTimer') : t('timer.startTimer')}
             >
               {timer.isRunning ? <Pause size={22} aria-hidden="true" /> : <Play size={22} className="ml-0.5" aria-hidden="true" />}
             </motion.button>
@@ -639,7 +641,7 @@ function TimerApp() {
                   ? 'border-[var(--text)] text-[var(--text)]'
                   : 'pointer-events-none border-[var(--border)] text-[var(--border)]'
               }`}
-              aria-label="Guardar sesión"
+              aria-label={t('timer.saveSession')}
               aria-disabled={!canSave}
             >
               <Check size={18} strokeWidth={1.5} aria-hidden="true" />
@@ -660,7 +662,7 @@ function TimerApp() {
         }}
         transition={{ duration: 0.4 }}
       >
-        <span aria-label={`Racha de ${stats.streak} días consecutivos`}>{stats.streak} días</span>
+        <span aria-label={`${t('stats.streak')}: ${stats.streak} ${t('common.days')}`}>{stats.streak} {t('common.days')}</span>
         <span className="text-[var(--border)]">·</span>
         {/* Daily progress */}
         <div className="flex items-center gap-1.5">
@@ -670,7 +672,7 @@ function TimerApp() {
             aria-valuenow={Math.round(dayProgress * 100)}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="Progreso diario"
+            aria-label={t('stats.studyTimeToday')}
           >
             <motion.div
               className="h-full rounded-full bg-[var(--text-tertiary)]"
@@ -678,7 +680,7 @@ function TimerApp() {
               transition={{ duration: 0.4 }}
             />
           </div>
-          <span className="hidden sm:inline">hoy</span>
+          <span className="hidden sm:inline">{t('common.today')}</span>
         </div>
         <span className="text-[var(--border)]">·</span>
         {/* Weekly progress */}
@@ -689,7 +691,7 @@ function TimerApp() {
             aria-valuenow={Math.round(weekProgress * 100)}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="Progreso semanal"
+            aria-label={t('stats.weeklyProgress')}
           >
             <motion.div
               className="h-full rounded-full bg-[var(--text-tertiary)]"
@@ -743,7 +745,7 @@ function TimerApp() {
                 transition={{ delay: 0.3 }}
                 className="mb-3 px-1 text-[10px] font-medium uppercase tracking-widest text-[var(--text-tertiary)]"
               >
-                Asignaturas
+                {t('subjects.title')}
               </motion.p>
               <div className="space-y-0.5">
                 {subjects.map((s, index) => (
@@ -793,11 +795,11 @@ function TimerApp() {
                 transition={{ delay: 0.3 }}
                 className="mb-3 px-1 text-[10px] font-medium uppercase tracking-widest text-[var(--text-tertiary)]"
               >
-                Tareas
+                {t('todos.title')}
               </motion.p>
-              {current?.todos?.filter(t => !t.completed).length > 0 ? (
+              {current?.todos?.filter(task => !task.completed).length > 0 ? (
                 <div className="space-y-0.5">
-                  {current.todos.filter(t => !t.completed).slice(0, 5).map((todo, index) => (
+                  {current.todos.filter(task => !task.completed).slice(0, 5).map((todo, index) => (
                     <motion.button
                       key={todo.id}
                       initial={{ opacity: 0, x: 15 }}
@@ -816,14 +818,14 @@ function TimerApp() {
                       </span>
                     </motion.button>
                   ))}
-                  {current.todos.filter(t => !t.completed).length > 5 && (
+                  {current.todos.filter(task => !task.completed).length > 5 && (
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
                       className="px-2.5 pt-1 text-[11px] text-[var(--text-tertiary)]"
                     >
-                      +{current.todos.filter(t => !t.completed).length - 5} más
+                      {t('todos.more', { count: current.todos.filter(todo => !todo.completed).length - 5 })}
                     </motion.p>
                   )}
                 </div>
@@ -834,7 +836,7 @@ function TimerApp() {
                   transition={{ delay: 0.3 }}
                   className="px-1 text-[12px] text-[var(--text-tertiary)]"
                 >
-                  Sin tareas pendientes
+                  {t('todos.noPending')}
                 </motion.p>
               )}
             </motion.div>
@@ -879,17 +881,17 @@ function TimerApp() {
               className="fixed left-1/2 top-1/2 z-50 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-[var(--bg-solid)] p-6 shadow-2xl"
             >
               <h3 className="text-[15px] font-semibold text-[var(--text)]">
-                ¿Eliminar asignatura?
+                {t('subjects.deleteConfirm.title')}
               </h3>
               <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
-                Se eliminará "{subjectToDelete.emoji} {subjectToDelete.name}" y todas sus tareas. Esta acción no se puede deshacer.
+                {t('subjects.deleteConfirm.message', { emoji: subjectToDelete.emoji, name: subjectToDelete.name })}
               </p>
               <div className="mt-6 flex gap-3">
                 <button
                   onClick={() => setSubjectToDelete(null)}
                   className="flex-1 rounded-lg border border-[var(--border)] px-4 py-2.5 text-[13px] font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-secondary)]"
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={() => {
@@ -899,7 +901,7 @@ function TimerApp() {
                   }}
                   className="flex-1 rounded-lg bg-red-500 px-4 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-red-600"
                 >
-                  Eliminar
+                  {t('common.delete')}
                 </button>
               </div>
             </motion.div>

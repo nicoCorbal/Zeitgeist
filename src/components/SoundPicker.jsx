@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion'
 import { Volume2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { SOUNDS, playSound } from '../data/sounds'
 
 export function SoundPicker({ value, onChange }) {
+  const { t } = useTranslation()
+
   const handleSelect = (soundId) => {
     onChange(soundId)
     playSound(soundId)
@@ -22,7 +25,7 @@ export function SoundPicker({ value, onChange }) {
           }`}
         >
           <Volume2 size={14} />
-          <span className="text-[13px]">{sound.name}</span>
+          <span className="text-[13px]">{t(`sounds.${sound.id}`)}</span>
         </motion.button>
       ))}
     </div>

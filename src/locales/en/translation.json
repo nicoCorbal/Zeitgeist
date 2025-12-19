@@ -1,0 +1,361 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "close": "Close",
+    "continue": "Continue",
+    "skip": "Skip",
+    "start": "Start",
+    "back": "Back",
+    "today": "today",
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes",
+    "completed": "completed",
+    "error": "Error"
+  },
+  "nav": {
+    "openApp": "Open app",
+    "openCalendar": "Open calendar",
+    "viewStats": "View statistics",
+    "openSettings": "Open settings"
+  },
+  "landing": {
+    "hero": {
+      "title1": "Your study time,",
+      "title2": "more",
+      "title3": "dense",
+      "subtitle": "Minimalist timer for students. No distractions, no accounts, no hassle."
+    },
+    "values": {
+      "noSignup": "No signup",
+      "freeForever": "Free forever",
+      "worksOffline": "Works offline"
+    },
+    "cta": {
+      "startNow": "Start now",
+      "seeHow": "See how it works",
+      "startFree": "Start free"
+    },
+    "features": {
+      "title": "Features",
+      "subtitle": "Minimalist and functional",
+      "pomodoro": {
+        "title": "Pomodoro & Free",
+        "description": "Two modes to fit your study style. Automatic breaks or full control."
+      },
+      "subjects": {
+        "title": "Subjects",
+        "description": "Organize your time by subject. Set custom durations for each one."
+      },
+      "calendar": {
+        "title": "Calendar",
+        "description": "Plan exams and study blocks. Visual countdown for your important dates."
+      },
+      "stats": {
+        "title": "Statistics",
+        "description": "Activity heatmap, streaks, total hours. Visualize your real progress."
+      },
+      "achievements": {
+        "title": "Achievements",
+        "description": "18 unlockable achievements. Small victories that celebrate your consistency."
+      },
+      "themes": {
+        "title": "8 Themes",
+        "description": "Light, dark, gradients. Find the perfect ambiance to focus."
+      }
+    },
+    "finalCta": {
+      "title": "Ready to focus?",
+      "subtitle": "Start in seconds. No signup, no setup."
+    },
+    "footer": {
+      "privacy": "Privacy",
+      "madeFor": "Made for students"
+    }
+  },
+  "timer": {
+    "skipToTimer": "Skip to timer",
+    "break": "break!",
+    "skipBreak": "skip →",
+    "pomodoro": "Pomodoro",
+    "free": "Free",
+    "pauseTimer": "Pause timer",
+    "startTimer": "Start timer",
+    "resetTimer": "Reset timer",
+    "saveSession": "Save session"
+  },
+  "subjects": {
+    "title": "Subjects",
+    "general": "General",
+    "newSubject": "New subject",
+    "editName": "Edit name",
+    "viewTasks": "View tasks",
+    "deleteConfirm": {
+      "title": "Delete subject?",
+      "message": "\"{{emoji}} {{name}}\" and all its tasks will be deleted. This action cannot be undone."
+    }
+  },
+  "todos": {
+    "title": "Tasks",
+    "newTask": "New task...",
+    "completed": "Completed",
+    "empty": "No tasks",
+    "noPending": "No pending tasks",
+    "more": "+{{count}} more"
+  },
+  "toast": {
+    "pomodoroComplete": "Pomodoro complete",
+    "breakComplete": "Break finished",
+    "sessionSaved": "Session saved"
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "goals": "Goals",
+    "weeklyGoal": "Weekly goal",
+    "dailyGoal": "Daily goal",
+    "sound": "Sound",
+    "soundOn": "Enable sound",
+    "soundOff": "Disable sound",
+    "soundDescription": "Sound notification when timer ends",
+    "deepFocus": "Deep Focus",
+    "deepFocusDescription": "Minimalist mode that hides everything during focus",
+    "times": "Times",
+    "focus": "Focus",
+    "break": "Break",
+    "longBreak": "Long break",
+    "every": "Every",
+    "never": "Never",
+    "emoji": "Emoji",
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "playPause": "Play / Pause",
+      "reset": "Reset",
+      "skipBreak": "Skip break",
+      "space": "space"
+    },
+    "backup": {
+      "title": "Backup",
+      "sessions": "Sessions",
+      "total": "total",
+      "save": "Save backup",
+      "restore": "Restore data",
+      "restoreHint": "Load a previous backup",
+      "confirmTitle": "Restore data?",
+      "confirmMessage": "This will replace all your current data. You will lose your sessions, subjects, and settings.",
+      "saveError": "Error saving",
+      "saveSuccess": "Backup saved successfully",
+      "restoreError": "Error restoring"
+    },
+    "version": "Denso v1.0",
+    "language": "Language",
+    "languages": {
+      "es": "Español",
+      "en": "English"
+    }
+  },
+  "stats": {
+    "title": "Statistics",
+    "today": "Today",
+    "streak": "Streak",
+    "thisWeek": "This week",
+    "bySubject": "By subject",
+    "recentSessions": "Recent sessions",
+    "achievements": "Achievements",
+    "unlocked": "unlocked",
+    "activity": "Activity",
+    "last16Weeks": "Last 16 weeks",
+    "less": "Less",
+    "more": "More",
+    "activeDays": "active days",
+    "totalHours": "h total",
+    "studyTimeToday": "Study time today",
+    "currentStreak": "Current streak",
+    "weeklyProgress": "Weekly progress",
+    "achievementProgress": "Achievement progress"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "day": "Day",
+    "exams": "Exams",
+    "exam": "Exam",
+    "study": "Study",
+    "personal": "Personal",
+    "selectDay": "Select a day on the calendar",
+    "noEvents": "No events for this day",
+    "noUpcoming": "No upcoming exams",
+    "addEvent": "Add event",
+    "tomorrow": "Tomorrow",
+    "past": "Past",
+    "close": "Close calendar",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "days": ["M", "T", "W", "T", "F", "S", "S"]
+  },
+  "eventForm": {
+    "editEvent": "Edit event",
+    "newEvent": "New event",
+    "title": "Title",
+    "date": "Date",
+    "startDate": "Start",
+    "endDate": "End",
+    "time": "Time",
+    "duration": "Duration (minutes)",
+    "subject": "Subject",
+    "noSubject": "No subject",
+    "optional": "(optional)",
+    "oneDay": "One day",
+    "dateRange": "Date range",
+    "placeholders": {
+      "exam": "E.g.: Math Exam",
+      "personal": "E.g.: Meet with friends",
+      "study": "E.g.: Study Chapter 5"
+    },
+    "saveChanges": "Save changes",
+    "addEvent": "Add event",
+    "addEvents": "Add {{count}} events",
+    "willCreate": "{{count}} study events will be created"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to Denso",
+      "subtitle": "Your new study companion"
+    },
+    "privacy": {
+      "title": "Your data is yours",
+      "subtitle": "Everything is saved in your browser. No accounts, no servers.",
+      "warning": "If you clear browser data, you will lose your progress."
+    },
+    "exams": {
+      "title": "Plan your exams",
+      "subtitle": "Add important dates and organize your study time."
+    },
+    "goal": {
+      "title": "How many hours per week?",
+      "subtitle": "Set a realistic goal. You can change it later."
+    },
+    "subject": {
+      "title": "Your first subject",
+      "subtitle": "Add the subject you need to focus on the most.",
+      "placeholder": "Subject name"
+    },
+    "skipTutorial": "Skip tutorial"
+  },
+  "offline": {
+    "offline": "Offline - Data is saved locally",
+    "restored": "Connection restored"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Try reloading the page.",
+    "retry": "Try again",
+    "reset": "Reset application",
+    "details": "Error details"
+  },
+  "achievements": {
+    "unlocked": "Achievement unlocked",
+    "first_session": {
+      "name": "First session",
+      "description": "Complete your first study session"
+    },
+    "sessions_10": {
+      "name": "On a roll",
+      "description": "Complete 10 study sessions"
+    },
+    "sessions_50": {
+      "name": "Dedicated",
+      "description": "Complete 50 study sessions"
+    },
+    "sessions_100": {
+      "name": "Centurion",
+      "description": "Complete 100 study sessions"
+    },
+    "sessions_500": {
+      "name": "Legend",
+      "description": "Complete 500 study sessions"
+    },
+    "streak_3": {
+      "name": "Consistent",
+      "description": "Maintain a 3-day streak"
+    },
+    "streak_7": {
+      "name": "Perfect week",
+      "description": "Maintain a 7-day streak"
+    },
+    "streak_30": {
+      "name": "Unstoppable",
+      "description": "Maintain a 30-day streak"
+    },
+    "streak_100": {
+      "name": "Machine",
+      "description": "Maintain a 100-day streak"
+    },
+    "hours_10": {
+      "name": "Marathoner",
+      "description": "Accumulate 10 hours of study"
+    },
+    "hours_50": {
+      "name": "Studious",
+      "description": "Accumulate 50 hours of study"
+    },
+    "hours_100": {
+      "name": "Centenarian",
+      "description": "Accumulate 100 hours of study"
+    },
+    "hours_500": {
+      "name": "Master",
+      "description": "Accumulate 500 hours of study"
+    },
+    "hours_1000": {
+      "name": "Expert",
+      "description": "Accumulate 1000 hours of study"
+    },
+    "early_bird": {
+      "name": "Early bird",
+      "description": "Study before 7:00 AM"
+    },
+    "night_owl": {
+      "name": "Night owl",
+      "description": "Study after 11:00 PM"
+    },
+    "weekend_warrior": {
+      "name": "Weekend warrior",
+      "description": "Study on both Saturday and Sunday"
+    },
+    "long_session": {
+      "name": "Deep immersion",
+      "description": "Complete a 2+ hour session"
+    },
+    "diverse": {
+      "name": "Versatile",
+      "description": "Study 5 different subjects"
+    }
+  },
+  "sounds": {
+    "bell": "Bell",
+    "ding": "Ding",
+    "chime": "Chime",
+    "soft": "Soft",
+    "ping": "Ping",
+    "gentle": "Gentle"
+  },
+  "privacy": {
+    "title": "Privacy",
+    "intro": "Your privacy is important to us.",
+    "localStorage": "All information you generate while using the app (study sessions, subjects, tasks, settings and preferences) is saved exclusively in your browser's local storage.",
+    "meaning": "This means:",
+    "points": [
+      "Your study data never leaves your device",
+      "There are no servers storing your personal information",
+      "There are no user accounts or registration",
+      "We don't share your study data with third parties"
+    ],
+    "analyticsTitle": "Analytics",
+    "analytics": "We use Google Analytics to understand how the app is used in aggregate and anonymously. This helps us improve Denso. Google Analytics may collect information such as your approximate location, device type, and pages visited. We do not collect information about your study sessions or subjects.",
+    "dataLoss": "If you clear your browser data or use another device, you will start from scratch. You can export your data from the app settings if you want to make a backup.",
+    "lastUpdate": "Last updated: December 2024"
+  }
+}

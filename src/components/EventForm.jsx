@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, BookOpen, GraduationCap, Heart } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export function EventForm({
   isOpen,
@@ -10,6 +11,7 @@ export function EventForm({
   initialDate = null,
   editingEvent = null,
 }) {
+  const { t } = useTranslation()
   const [type, setType] = useState('study-block')
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
@@ -109,7 +111,7 @@ export function EventForm({
             {/* Header */}
             <div className="mb-5 flex items-center justify-between">
               <h3 className="text-[17px] font-semibold">
-                {editingEvent ? 'Editar evento' : 'Nuevo evento'}
+                {editingEvent ? t('eventForm.editEvent') : t('eventForm.newEvent')}
               </h3>
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -134,7 +136,7 @@ export function EventForm({
                   }`}
                 >
                   <BookOpen size={14} />
-                  Estudio
+                  {t('calendar.study')}
                 </button>
                 <button
                   type="button"
@@ -146,7 +148,7 @@ export function EventForm({
                   }`}
                 >
                   <GraduationCap size={14} />
-                  Examen
+                  {t('calendar.exam')}
                 </button>
                 <button
                   type="button"
@@ -158,14 +160,14 @@ export function EventForm({
                   }`}
                 >
                   <Heart size={14} />
-                  Personal
+                  {t('calendar.personal')}
                 </button>
               </div>
 
               {/* Título */}
               <div>
                 <label className="mb-1.5 block text-[12px] font-medium text-[var(--text-secondary)]">
-                  Título
+                  {t('eventForm.title')}
                 </label>
                 <input
                   type="text"
@@ -173,10 +175,10 @@ export function EventForm({
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder={
                     type === 'exam'
-                      ? 'Ej: Examen de Matemáticas'
+                      ? t('eventForm.placeholders.exam')
                       : type === 'personal'
-                        ? 'Ej: Ver a mi novia'
-                        : 'Ej: Estudiar Tema 5'
+                        ? t('eventForm.placeholders.personal')
+                        : t('eventForm.placeholders.study')
                   }
                   className="w-full rounded-xl bg-[var(--bg-secondary)] px-4 py-2.5 text-[14px] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--text)]/20"
                   required
@@ -195,7 +197,7 @@ export function EventForm({
                         : 'text-[var(--text-tertiary)]'
                     }`}
                   >
-                    Un día
+                    {t('eventForm.oneDay')}
                   </button>
                   <button
                     type="button"
@@ -206,7 +208,7 @@ export function EventForm({
                         : 'text-[var(--text-tertiary)]'
                     }`}
                   >
-                    Rango de fechas
+                    {t('eventForm.dateRange')}
                   </button>
                 </div>
               )}
@@ -214,7 +216,7 @@ export function EventForm({
               <div className={useRange && !editingEvent && type === 'study-block' ? 'grid grid-cols-2 gap-3' : ''}>
                 <div>
                   <label className="mb-1.5 block text-[12px] font-medium text-[var(--text-secondary)]">
-                    {useRange && !editingEvent && type === 'study-block' ? 'Inicio' : 'Fecha'}
+                    {useRange && !editingEvent && type === 'study-block' ? t('eventForm.startDate') : t('eventForm.date')}
                   </label>
                   <input
                     type="date"
@@ -231,7 +233,7 @@ export function EventForm({
                 {useRange && !editingEvent && type === 'study-block' && (
                   <div>
                     <label className="mb-1.5 block text-[12px] font-medium text-[var(--text-secondary)]">
-                      Fin
+                      {t('eventForm.endDate')}
                     </label>
                     <input
                       type="date"
@@ -247,14 +249,14 @@ export function EventForm({
 
               {useRange && !editingEvent && type === 'study-block' && totalDays > 1 && (
                 <p className="text-[11px] text-[var(--text-tertiary)]">
-                  Se crearán {totalDays} eventos de estudio
+                  {t('eventForm.willCreate', { count: totalDays })}
                 </p>
               )}
 
               {/* Hora (opcional) */}
               <div>
                 <label className="mb-1.5 block text-[12px] font-medium text-[var(--text-secondary)]">
-                  Hora <span className="text-[var(--text-tertiary)]">(opcional)</span>
+                  {t('eventForm.time')} <span className="text-[var(--text-tertiary)]">{t('eventForm.optional')}</span>
                 </label>
                 <input
                   type="time"
@@ -268,7 +270,7 @@ export function EventForm({
               {type === 'study-block' && (
                 <div>
                   <label className="mb-1.5 block text-[12px] font-medium text-[var(--text-secondary)]">
-                    Duración (minutos)
+                    {t('eventForm.duration')}
                   </label>
                   <input
                     type="number"
@@ -286,14 +288,14 @@ export function EventForm({
               {subjects.length > 0 && (
                 <div>
                   <label className="mb-1.5 block text-[12px] font-medium text-[var(--text-secondary)]">
-                    Asignatura <span className="text-[var(--text-tertiary)]">(opcional)</span>
+                    {t('eventForm.subject')} <span className="text-[var(--text-tertiary)]">{t('eventForm.optional')}</span>
                   </label>
                   <select
                     value={subjectId}
                     onChange={(e) => setSubjectId(e.target.value)}
                     className="w-full rounded-xl bg-[var(--bg-secondary)] px-4 py-2.5 text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--text)]/20"
                   >
-                    <option value="">Sin asignatura</option>
+                    <option value="">{t('eventForm.noSubject')}</option>
                     {subjects.map((s) => (
                       <option key={s.id} value={s.id}>
                         {s.emoji} {s.name}
@@ -311,10 +313,10 @@ export function EventForm({
                 className="mt-2 w-full rounded-xl bg-[var(--text)] py-3 text-[14px] font-semibold text-[var(--bg)] transition-colors"
               >
                 {editingEvent
-                  ? 'Guardar cambios'
+                  ? t('eventForm.saveChanges')
                   : totalDays > 1
-                    ? `Añadir ${totalDays} eventos`
-                    : 'Añadir evento'}
+                    ? t('eventForm.addEvents', { count: totalDays })
+                    : t('eventForm.addEvent')}
               </motion.button>
             </form>
           </motion.div>

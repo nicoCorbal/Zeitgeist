@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import { RefreshCw } from 'lucide-react'
+import i18n from '../i18n'
 
 export class ErrorBoundary extends Component {
   constructor(props) {
@@ -45,14 +46,16 @@ export class ErrorBoundary extends Component {
 
   render() {
     if (this.state.hasError) {
+      const t = i18n.t.bind(i18n)
+
       return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] px-6 text-center">
           <div className="max-w-sm">
             <h1 className="mb-2 text-[17px] font-semibold text-[var(--text)]">
-              Algo salió mal
+              {t('error.title')}
             </h1>
             <p className="mb-6 text-[13px] text-[var(--text-secondary)]">
-              Ha ocurrido un error inesperado. Puedes intentar recargar la página o reiniciar la aplicación.
+              {t('error.description')}
             </p>
 
             <div className="flex flex-col gap-3">
@@ -61,21 +64,21 @@ export class ErrorBoundary extends Component {
                 className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--text)] text-[13px] font-medium text-[var(--bg)] transition-opacity hover:opacity-90"
               >
                 <RefreshCw size={16} />
-                Intentar de nuevo
+                {t('error.retry')}
               </button>
 
               <button
                 onClick={this.handleClearAndReload}
                 className="h-11 w-full rounded-lg border border-[var(--border)] text-[13px] text-[var(--text-secondary)] transition-colors hover:border-[var(--text-tertiary)] hover:text-[var(--text)]"
               >
-                Reiniciar aplicación
+                {t('error.reset')}
               </button>
             </div>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-6 text-left">
                 <summary className="cursor-pointer text-[11px] text-[var(--text-tertiary)]">
-                  Detalles del error
+                  {t('error.details')}
                 </summary>
                 <pre className="mt-2 overflow-auto rounded bg-[var(--bg-secondary)] p-3 text-[10px] text-[var(--text-tertiary)]">
                   {this.state.error.toString()}

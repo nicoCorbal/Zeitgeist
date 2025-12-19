@@ -1,7 +1,8 @@
 import { useState, useEffect, useId, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Target, Volume2, VolumeX, Clock, Sparkles, Download, Upload, Database, Focus } from 'lucide-react'
+import { X, Target, Volume2, VolumeX, Clock, Sparkles, Download, Upload, Database, Focus, Globe } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { EmojiPicker } from './EmojiPicker'
 import { ThemePicker } from './ThemePicker'
 import { SoundPicker } from './SoundPicker'
@@ -30,6 +31,7 @@ const itemVariants = {
 }
 
 function DataManagementSection() {
+  const { t } = useTranslation()
   const fileInputRef = useRef(null)
   const [importStatus, setImportStatus] = useState(null)
   const [showConfirm, setShowConfirm] = useState(false)
@@ -39,10 +41,10 @@ function DataManagementSection() {
   const handleExport = () => {
     const result = exportData()
     if (!result.success) {
-      setImportStatus({ type: 'error', message: 'Error al guardar' })
+      setImportStatus({ type: 'error', message: t('settings.backup.saveError') })
       setTimeout(() => setImportStatus(null), 3000)
     } else {
-      setImportStatus({ type: 'success', message: 'Copia guardada correctamente' })
+      setImportStatus({ type: 'success', message: t('settings.backup.saveSuccess') })
       setTimeout(() => setImportStatus(null), 3000)
     }
   }
@@ -65,14 +67,14 @@ function DataManagementSection() {
     if (result.success) {
       setImportStatus({
         type: 'success',
-        message: `Restaurado: ${result.stats.sessions} sesiones, ${result.stats.subjects} materias`,
+        message: `${t('settings.backup.sessions')}: ${result.stats.sessions}, ${t('subjects.title')}: ${result.stats.subjects}`,
       })
       setTimeout(() => {
         setImportStatus(null)
         window.location.reload()
       }, 2000)
     } else {
-      setImportStatus({ type: 'error', message: result.error || 'Error al restaurar' })
+      setImportStatus({ type: 'error', message: result.error || t('settings.backup.restoreError') })
       setTimeout(() => setImportStatus(null), 3000)
     }
   }
@@ -87,23 +89,23 @@ function DataManagementSection() {
       <div className="flex items-center gap-2 text-[var(--text-secondary)]">
         <Database size={12} aria-hidden="true" />
         <span id="data-section" className="text-[10px] font-semibold uppercase tracking-widest">
-          Copia de seguridad
+          {t('settings.backup.title')}
         </span>
       </div>
 
       <p className="mt-2 text-[12px] text-[var(--text-tertiary)]">
-        Guarda tus datos para transferirlos a otro dispositivo o restaurarlos más tarde.
+        {t('settings.backup.restoreHint')}
       </p>
 
       {/* Stats */}
       <div className="mt-4 grid grid-cols-2 gap-3 text-center">
         <div className="rounded-lg bg-[var(--bg-secondary)] p-3">
           <div className="text-lg font-semibold text-[var(--text)]">{dataStats.sessions}</div>
-          <div className="text-[11px] text-[var(--text-tertiary)]">sesiones</div>
+          <div className="text-[11px] text-[var(--text-tertiary)]">{t('settings.backup.sessions')}</div>
         </div>
         <div className="rounded-lg bg-[var(--bg-secondary)] p-3">
           <div className="text-lg font-semibold text-[var(--text)]">{dataStats.totalHours}h</div>
-          <div className="text-[11px] text-[var(--text-tertiary)]">totales</div>
+          <div className="text-[11px] text-[var(--text-tertiary)]">{t('settings.backup.total')}</div>
         </div>
       </div>
 
@@ -117,8 +119,8 @@ function DataManagementSection() {
             <Download size={16} className="text-[var(--text)]" aria-hidden="true" />
           </div>
           <div>
-            <div className="text-[13px] font-medium text-[var(--text)]">Guardar copia</div>
-            <div className="text-[11px] text-[var(--text-tertiary)]">Descarga un archivo con todos tus datos</div>
+            <div className="text-[13px] font-medium text-[var(--text)]">{t('settings.backup.save')}</div>
+            <div className="text-[11px] text-[var(--text-tertiary)]">{t('settings.backup.restoreHint')}</div>
           </div>
         </button>
         <button
@@ -129,8 +131,8 @@ function DataManagementSection() {
             <Upload size={16} className="text-[var(--text)]" aria-hidden="true" />
           </div>
           <div>
-            <div className="text-[13px] font-medium text-[var(--text)]">Restaurar datos</div>
-            <div className="text-[11px] text-[var(--text-tertiary)]">Carga una copia de seguridad anterior</div>
+            <div className="text-[13px] font-medium text-[var(--text)]">{t('settings.backup.restore')}</div>
+            <div className="text-[11px] text-[var(--text-tertiary)]">{t('settings.backup.restoreHint')}</div>
           </div>
         </button>
         <input
@@ -139,7 +141,7 @@ function DataManagementSection() {
           accept=".json"
           onChange={handleFileSelect}
           className="hidden"
-          aria-label="Seleccionar archivo para restaurar"
+          aria-label={t('settings.backup.restore')}
         />
       </div>
 
@@ -160,22 +162,22 @@ function DataManagementSection() {
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-sm rounded-xl bg-[var(--bg-solid)] p-5 shadow-xl"
             >
-              <h3 className="text-[15px] font-semibold text-[var(--text)]">¿Restaurar datos?</h3>
+              <h3 className="text-[15px] font-semibold text-[var(--text)]">{t('settings.backup.confirmTitle')}</h3>
               <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
-                Esto reemplazará todos tus datos actuales con los del archivo seleccionado. Esta acción no se puede deshacer.
+                {t('settings.backup.confirmMessage')}
               </p>
               <div className="mt-4 flex gap-2">
                 <button
                   onClick={handleCancelImport}
                   className="flex-1 rounded-lg border border-[var(--border)] px-4 py-2.5 text-[13px] font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg-secondary)]"
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleConfirmImport}
                   className="flex-1 rounded-lg bg-[var(--text)] px-4 py-2.5 text-[13px] font-medium text-[var(--bg)] transition-opacity hover:opacity-90"
                 >
-                  Restaurar
+                  {t('settings.backup.restore')}
                 </button>
               </div>
             </motion.div>
@@ -224,6 +226,7 @@ export function SettingsPanel({
   dailyGoal,
   onDailyGoalChange,
 }) {
+  const { t, i18n } = useTranslation()
   const [goalHours, setGoalHours] = useState(Math.round(weeklyGoal / 3600))
   const [dailyGoalMinutes, setDailyGoalMinutes] = useState(Math.round(dailyGoal / 60))
   const [workMinutes, setWorkMinutes] = useState(Math.round((currentSubject?.workDuration || 25 * 60) / 60))
@@ -349,7 +352,7 @@ export function SettingsPanel({
                 id={titleId}
                 className="text-[15px] font-semibold tracking-[-0.01em] text-[var(--text)]"
               >
-                Ajustes
+                {t('settings.title')}
               </h2>
               <motion.button
                 data-close-button
@@ -357,7 +360,7 @@ export function SettingsPanel({
                 whileTap={{ scale: 0.95 }}
                 onClick={onClose}
                 className="rounded-full p-2 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
-                aria-label="Cerrar ajustes"
+                aria-label={t('common.close')}
               >
                 <X size={18} aria-hidden="true" />
               </motion.button>
@@ -376,7 +379,7 @@ export function SettingsPanel({
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                     <Sparkles size={12} aria-hidden="true" />
                     <span id="theme-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                      Tema
+                      {t('settings.theme')}
                     </span>
                   </div>
                   <div className="mt-4">
@@ -389,18 +392,18 @@ export function SettingsPanel({
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                     <Target size={12} aria-hidden="true" />
                     <span id="goal-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                      Metas
+                      {t('settings.goals')}
                     </span>
                   </div>
                   <div className="mt-4">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-[12px] text-[var(--text-secondary)]">Meta semanal</span>
+                      <span className="text-[12px] text-[var(--text-secondary)]">{t('settings.weeklyGoal')}</span>
                       <span className="text-[13px] font-medium tabular-nums text-[var(--text)]" aria-hidden="true">
                         {goalHours}h
                       </span>
                     </div>
                     <label htmlFor={goalSliderId} className="sr-only">
-                      Meta de horas semanales
+                      {t('settings.weeklyGoal')}
                     </label>
                     <input
                       id={goalSliderId}
@@ -413,13 +416,13 @@ export function SettingsPanel({
                       aria-valuenow={goalHours}
                       aria-valuemin={1}
                       aria-valuemax={60}
-                      aria-valuetext={`${goalHours} horas por semana`}
+                      aria-valuetext={`${goalHours} ${t('common.hours')}`}
                     />
                   </div>
                   {/* Daily goal sub-section */}
                   <div className="mt-6 pt-4 border-t border-[var(--border)]">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-[12px] text-[var(--text-secondary)]">Meta diaria</span>
+                      <span className="text-[12px] text-[var(--text-secondary)]">{t('settings.dailyGoal')}</span>
                       <span className="text-[13px] font-medium tabular-nums text-[var(--text)]" aria-hidden="true">
                         {dailyGoalMinutes >= 60
                           ? `${Math.floor(dailyGoalMinutes / 60)}h ${dailyGoalMinutes % 60 > 0 ? `${dailyGoalMinutes % 60}m` : ''}`
@@ -428,7 +431,7 @@ export function SettingsPanel({
                       </span>
                     </div>
                     <label htmlFor={dailyGoalSliderId} className="sr-only">
-                      Meta de minutos diarios
+                      {t('settings.dailyGoal')}
                     </label>
                     <input
                       id={dailyGoalSliderId}
@@ -442,7 +445,7 @@ export function SettingsPanel({
                       aria-valuenow={dailyGoalMinutes}
                       aria-valuemin={15}
                       aria-valuemax={480}
-                      aria-valuetext={`${dailyGoalMinutes} minutos por día`}
+                      aria-valuetext={`${dailyGoalMinutes} ${t('common.minutes')}`}
                     />
                   </div>
                 </motion.section>
@@ -453,14 +456,14 @@ export function SettingsPanel({
                     <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                       {soundEnabled ? <Volume2 size={12} aria-hidden="true" /> : <VolumeX size={12} aria-hidden="true" />}
                       <span id="sound-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                        Sonido
+                        {t('settings.sound')}
                       </span>
                     </div>
                     <button
                       id={soundToggleId}
                       role="switch"
                       aria-checked={soundEnabled}
-                      aria-label={soundEnabled ? 'Desactivar sonido' : 'Activar sonido'}
+                      aria-label={soundEnabled ? t('settings.soundOff') : t('settings.soundOn')}
                       onClick={onSoundToggle}
                       className={`relative h-6 w-11 rounded-full transition-colors ${
                         soundEnabled ? 'bg-[var(--text)]' : 'bg-[var(--border)]'
@@ -481,7 +484,7 @@ export function SettingsPanel({
                   )}
                   {!soundEnabled && (
                     <p className="mt-2 text-[12px] text-[var(--text-tertiary)]">
-                      Notificación sonora al terminar
+                      {t('settings.soundDescription')}
                     </p>
                   )}
                 </motion.section>
@@ -492,13 +495,13 @@ export function SettingsPanel({
                     <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                       <Focus size={12} aria-hidden="true" />
                       <span id="deepfocus-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                        Deep Focus
+                        {t('settings.deepFocus')}
                       </span>
                     </div>
                     <button
                       role="switch"
                       aria-checked={deepFocusEnabled}
-                      aria-label={deepFocusEnabled ? 'Desactivar deep focus' : 'Activar deep focus'}
+                      aria-label={t('settings.deepFocus')}
                       onClick={onDeepFocusToggle}
                       className={`relative h-6 w-11 rounded-full transition-colors ${
                         deepFocusEnabled ? 'bg-[var(--text)]' : 'bg-[var(--border)]'
@@ -513,7 +516,7 @@ export function SettingsPanel({
                     </button>
                   </div>
                   <p className="mt-3 text-[12px] text-[var(--text-tertiary)]">
-                    Modo minimalista que oculta todo durante el focus
+                    {t('settings.deepFocusDescription')}
                   </p>
                 </motion.section>
 
@@ -521,7 +524,7 @@ export function SettingsPanel({
                 <motion.section variants={itemVariants} aria-labelledby="customize-section">
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                     <span id="customize-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                      Emoji · {currentSubject?.name || 'General'}
+                      {t('settings.emoji')} · {currentSubject?.name || t('subjects.general')}
                     </span>
                   </div>
                   <div className="mt-4">
@@ -537,7 +540,7 @@ export function SettingsPanel({
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                     <Clock size={12} aria-hidden="true" />
                     <span id="times-section" className="text-[10px] font-semibold uppercase tracking-widest">
-                      Tiempos · {currentSubject?.name || 'General'}
+                      {t('settings.times')} · {currentSubject?.name || t('subjects.general')}
                     </span>
                   </div>
                   <div className="mt-4 space-y-4">
@@ -545,7 +548,7 @@ export function SettingsPanel({
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label htmlFor={workSliderId} className="text-[13px] text-[var(--text-secondary)]">
-                          Focus
+                          {t('settings.focus')}
                         </label>
                         <span className="text-[13px] font-medium tabular-nums text-[var(--text)]" aria-hidden="true">
                           {workMinutes} min
@@ -564,7 +567,7 @@ export function SettingsPanel({
                         aria-valuenow={workMinutes}
                         aria-valuemin={1}
                         aria-valuemax={120}
-                        aria-valuetext={`${workMinutes} minutos de focus`}
+                        aria-valuetext={`${workMinutes} ${t('common.minutes')}`}
                       />
                     </div>
 
@@ -572,7 +575,7 @@ export function SettingsPanel({
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label htmlFor={breakSliderId} className="text-[13px] text-[var(--text-secondary)]">
-                          Descanso
+                          {t('settings.break')}
                         </label>
                         <span className="text-[13px] font-medium tabular-nums text-[var(--text)]" aria-hidden="true">
                           {breakMinutes} min
@@ -591,7 +594,7 @@ export function SettingsPanel({
                         aria-valuenow={breakMinutes}
                         aria-valuemin={1}
                         aria-valuemax={30}
-                        aria-valuetext={`${breakMinutes} minutos de descanso`}
+                        aria-valuetext={`${breakMinutes} ${t('common.minutes')}`}
                       />
                     </div>
 
@@ -599,7 +602,7 @@ export function SettingsPanel({
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label htmlFor={longBreakSliderId} className="text-[13px] text-[var(--text-secondary)]">
-                          Descanso largo
+                          {t('settings.longBreak')}
                         </label>
                         <span className="text-[13px] font-medium tabular-nums text-[var(--text)]" aria-hidden="true">
                           {longBreakMinutes} min
@@ -618,7 +621,7 @@ export function SettingsPanel({
                         aria-valuenow={longBreakMinutes}
                         aria-valuemin={5}
                         aria-valuemax={60}
-                        aria-valuetext={`${longBreakMinutes} minutos de descanso largo`}
+                        aria-valuetext={`${longBreakMinutes} ${t('common.minutes')}`}
                       />
                     </div>
 
@@ -626,10 +629,10 @@ export function SettingsPanel({
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label htmlFor={intervalSliderId} className="text-[13px] text-[var(--text-secondary)]">
-                          Cada
+                          {t('settings.every')}
                         </label>
                         <span className="text-[13px] font-medium tabular-nums text-[var(--text)]" aria-hidden="true">
-                          {longBreakInterval === 0 ? 'Nunca' : `${longBreakInterval} pomodoros`}
+                          {longBreakInterval === 0 ? t('settings.never') : `${longBreakInterval} pomodoros`}
                         </span>
                       </div>
                       <input
@@ -645,7 +648,7 @@ export function SettingsPanel({
                         aria-valuenow={longBreakInterval}
                         aria-valuemin={0}
                         aria-valuemax={10}
-                        aria-valuetext={longBreakInterval === 0 ? 'Nunca' : `Cada ${longBreakInterval} pomodoros`}
+                        aria-valuetext={longBreakInterval === 0 ? t('settings.never') : `${longBreakInterval} pomodoros`}
                       />
                     </div>
                   </div>
@@ -654,19 +657,19 @@ export function SettingsPanel({
                 {/* Keyboard shortcuts */}
                 <motion.section variants={itemVariants} aria-labelledby="shortcuts-section">
                   <span id="shortcuts-section" className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-secondary)]">
-                    Atajos de teclado
+                    {t('settings.shortcuts.title')}
                   </span>
                   <dl className="mt-4 space-y-2">
                     <div className="flex items-center justify-between text-[13px]">
-                      <dt className="text-[var(--text-secondary)]">Play / Pausa</dt>
+                      <dt className="text-[var(--text-secondary)]">{t('settings.shortcuts.playPause')}</dt>
                       <dd>
                         <kbd className="rounded border border-[var(--border)] bg-[var(--bg-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text)]">
-                          espacio
+                          {t('settings.shortcuts.space')}
                         </kbd>
                       </dd>
                     </div>
                     <div className="flex items-center justify-between text-[13px]">
-                      <dt className="text-[var(--text-secondary)]">Reiniciar</dt>
+                      <dt className="text-[var(--text-secondary)]">{t('settings.shortcuts.reset')}</dt>
                       <dd>
                         <kbd className="rounded border border-[var(--border)] bg-[var(--bg-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text)]">
                           R
@@ -674,7 +677,7 @@ export function SettingsPanel({
                       </dd>
                     </div>
                     <div className="flex items-center justify-between text-[13px]">
-                      <dt className="text-[var(--text-secondary)]">Saltar break</dt>
+                      <dt className="text-[var(--text-secondary)]">{t('settings.shortcuts.skipBreak')}</dt>
                       <dd>
                         <kbd className="rounded border border-[var(--border)] bg-[var(--bg-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text)]">
                           S
@@ -682,6 +685,38 @@ export function SettingsPanel({
                       </dd>
                     </div>
                   </dl>
+                </motion.section>
+
+                {/* Language selector */}
+                <motion.section variants={itemVariants} aria-labelledby="language-section">
+                  <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+                    <Globe size={12} aria-hidden="true" />
+                    <span id="language-section" className="text-[10px] font-semibold uppercase tracking-widest">
+                      {t('settings.language')}
+                    </span>
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      onClick={() => i18n.changeLanguage('es')}
+                      className={`flex-1 rounded-lg border px-4 py-2.5 text-[13px] font-medium transition-colors ${
+                        i18n.language === 'es'
+                          ? 'border-[var(--text)] bg-[var(--text)] text-[var(--bg)]'
+                          : 'border-[var(--border)] text-[var(--text)] hover:bg-[var(--bg-secondary)]'
+                      }`}
+                    >
+                      {t('settings.languages.es')}
+                    </button>
+                    <button
+                      onClick={() => i18n.changeLanguage('en')}
+                      className={`flex-1 rounded-lg border px-4 py-2.5 text-[13px] font-medium transition-colors ${
+                        i18n.language === 'en'
+                          ? 'border-[var(--text)] bg-[var(--text)] text-[var(--bg)]'
+                          : 'border-[var(--border)] text-[var(--text)] hover:bg-[var(--bg-secondary)]'
+                      }`}
+                    >
+                      {t('settings.languages.en')}
+                    </button>
+                  </div>
                 </motion.section>
 
                 {/* Data management */}
@@ -698,13 +733,13 @@ export function SettingsPanel({
               style={{ paddingBottom: 'max(16px, var(--safe-area-bottom))' }}
             >
               <div className="flex items-center justify-center gap-3 text-[11px] text-[var(--text-tertiary)]">
-                <span>Denso v1.0</span>
+                <span>{t('settings.version')}</span>
                 <span>·</span>
                 <Link
                   to="/privacy"
                   className="transition-colors hover:text-[var(--text-secondary)]"
                 >
-                  Privacidad
+                  {t('privacy.title')}
                 </Link>
               </div>
             </motion.div>
